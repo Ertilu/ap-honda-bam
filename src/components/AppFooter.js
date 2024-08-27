@@ -6,7 +6,7 @@ const AppFooter = () => {
     <CFooter>
       <div>
         <a href="/" target="_blank" rel="noopener noreferrer">
-          Calties
+          Honda BAM - Admin Panel
         </a>
         <span className="ms-1">&copy; {new Date().getFullYear()}</span>
       </div>

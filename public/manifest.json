@@ -1,6 +1,6 @@
 {
-  "short_name": "Calties-AP",
-  "name": "Calties Admin Panel",
+  "short_name": "BAM-AP",
+  "name": "BAM Admin Panel",
   "icons": [
     {
       "src": "./assets/img/favicon.png",

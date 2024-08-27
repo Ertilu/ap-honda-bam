@@ -29,7 +29,7 @@ import ModalConfirmation from '../../../components/ModalConfirmation'
 import { spacing } from 'src/shared/style.const'
 import { formatRupiah } from 'src/shared/utils/formatter'
 import { useDebounce } from 'src/shared/utils/debounce'
-import InventoryService from 'src/services/inventory.service'
+import CatalogueService from 'src/services/catalogue.service'
 import './index.scss'
 import ModalDetail from './detail'
 import DatePicker from 'react-datepicker'
@@ -54,8 +54,6 @@ const Dashboard = (props) => {
   const [modalConfirmDelete, setModalConfirmDelete] = useState(false)
   const [idToDelete, setIdToDelete] = useState('')
   const [modalDetail, setModalDetail] = useState(false)
-  const [dataInStock, setDataInStock] = useState([])
-  const [dataOutStock, setDataOutStock] = useState([])
   const [filter, setFilter] = useState({
     filterDate: new Date(),
   })
@@ -66,7 +64,7 @@ const Dashboard = (props) => {
   }, [debouncedValue, filter])
 
   const getData = useCallback(() => {
-    InventoryService.getAllData({
+    CatalogueService.getAllData({
       search: debouncedValue,
       filterStockYear: filter.filterDate.getFullYear(),
       filterStockMonth: filter.filterDate.getMonth(),
@@ -85,7 +83,7 @@ const Dashboard = (props) => {
   const onEdit = useCallback(
     async (id) => {
       setLoading(true)
-      const res = await InventoryService.getDetail(id)
+      const res = await CatalogueService.getDetail(id)
       if (res?.id) {
         setLoading(false)
         dispatch({
@@ -105,33 +103,16 @@ const Dashboard = (props) => {
   const onDelete = useCallback(async () => {
     setLoading(true)
     setModalConfirmDelete(false)
-    await InventoryService.delete(idToDelete)
+    await CatalogueService.delete(idToDelete)
     getData()
   }, [idToDelete, getData])
 
   const openModalDetail = useCallback((currentData) => {
     setModalDetail(true)
-
-    setDataInStock(
-      currentData?.inStocks?.map((inStock) => ({
-        ...inStock,
-        inventory: currentData,
-      })),
-    )
-
-    setDataOutStock(
-      currentData?.outStocks?.map((outStock) => ({
-        ...outStock,
-        inventory: currentData,
-      })),
-    )
   }, [])
 
   const closeModalDetail = () => {
     setModalDetail(false)
-
-    setDataInStock([])
-    setDataOutStock([])
   }
 
   return (
@@ -143,16 +124,10 @@ const Dashboard = (props) => {
           onClose={() => setModalConfirmDelete(false)}
           onOk={onDelete}
         />
-        <ModalDetail
-          visible={modalDetail}
-          onClose={closeModalDetail}
-          dataInStock={dataInStock}
-          dataOutStock={dataOutStock}
-        />
         <CCardHeader>
           <div>
             <div className="d-flex justify-content-between align-items-center mt-2">
-              <h4>Data Barang</h4>
+              <h4>Catalogues</h4>
               <CInputGroup style={{ width: 300, height: 30 }}>
                 <CFormInput
                   placeholder="Cari Data"
@@ -167,53 +142,38 @@ const Dashboard = (props) => {
                 </CInputGroupText>
               </CInputGroup>
             </div>
-            <div className="d-flex justify-content-between align-items-center">
-              <CButton
-                color="primary"
-                style={{ margin: `${spacing[8]} 0` }}
-                onClick={() => navigate('/dashboard/forms')}
-              >
-                Tambah Data
-              </CButton>
-              <div>
-                <DatePicker
-                  selected={filter.filterDate}
-                  className="datepicker"
-                  customInput={<CustomDatePickerButton />}
-                  showMonthYearPicker
-                  onChange={(date) =>
-                    setFilter((currentFilter) => ({ ...currentFilter, filterDate: date }))
-                  }
-                />
-              </div>
-            </div>
           </div>
         </CCardHeader>
         <CCardBody>
           <CTable hover striped responsive>
             <CTableHead>
               <CTableRow>
-                <CTableHeaderCell scope="col">Nama Barang</CTableHeaderCell>
-                <CTableHeaderCell scope="col">Harga</CTableHeaderCell>
-                <CTableHeaderCell scope="col" width={150}>
-                  Stok Masuk {moment(filter.filterDate).format('MMMM YYYY')}
+                <CTableHeaderCell scope="col" width={500}>
+                  Name
                 </CTableHeaderCell>
-                <CTableHeaderCell scope="col" width={150}>
-                  Stok Keluar {moment(filter.filterDate).format('MMMM YYYY')}
+                <CTableHeaderCell scope="col" width={250}>
+                  Price
                 </CTableHeaderCell>
+                <CTableHeaderCell scope="col">Description</CTableHeaderCell>
                 <CTableHeaderCell scope="col" width={150}>
-                  Sisa Stok {moment(filter.filterDate).format('MMMM YYYY')}
+                  Type
                 </CTableHeaderCell>
-                <CTableHeaderCell scope="col" width={150}>
-                  Total Stok Masuk
+                <CTableHeaderCell scope="col" width={550}>
+                  Colors
                 </CTableHeaderCell>
-                <CTableHeaderCell scope="col" width={150}>
-                  Total Stok Keluar
+                <CTableHeaderCell scope="col">Logo</CTableHeaderCell>
+                <CTableHeaderCell scope="col" width={'auto'}>
+                  Banners
                 </CTableHeaderCell>
-                <CTableHeaderCell scope="col" width={150}>
-                  Total Sisa Stok
+                <CTableHeaderCell scope="col" width={'auto'}>
+                  Images
                 </CTableHeaderCell>
-                <CTableHeaderCell scope="col">Action</CTableHeaderCell>
+                <CTableHeaderCell scope="col" width={'auto'}>
+                  Feature Texts
+                </CTableHeaderCell>
+                <CTableHeaderCell scope="col" width={'auto'}>
+                  Feature Images
+                </CTableHeaderCell>
               </CTableRow>
             </CTableHead>
             <CTableBody>
@@ -240,61 +200,99 @@ const Dashboard = (props) => {
                       onClick={() => openModalDetail(d)}
                       style={{ cursor: 'pointer' }}
                     >
-                      {d?.inStockCurrentMonth || 0}
+                      <div
+                        style={{
+                          display: 'block',
+                          maxHeight: '6em',
+                          textOverflow: 'ellipsis',
+                          wordWrap: 'break-word',
+                          overflow: 'hidden',
+                          width: '450px',
+                        }}
+                      >
+                        {d?.description || '-'}
+                      </div>
                     </CTableDataCell>
                     <CTableDataCell
                       align="middle"
                       onClick={() => openModalDetail(d)}
                       style={{ cursor: 'pointer' }}
                     >
-                      {d?.outStockCurrentMonth || 0}
+                      {d?.type || 0}
+                    </CTableDataCell>
+                    <CTableDataCell align="middle" onClick={() => openModalDetail(d)}>
+                      {d?.colors?.map((c) => c.name)?.join(', ') || '-'}
                     </CTableDataCell>
                     <CTableDataCell
                       align="middle"
                       onClick={() => openModalDetail(d)}
                       style={{ cursor: 'pointer' }}
                     >
-                      {d?.stockCurrentMonth || 0}
+                      <img alt="logo-catalogue" src={d?.logo} width={50} />
                     </CTableDataCell>
                     <CTableDataCell
                       align="middle"
                       onClick={() => openModalDetail(d)}
                       style={{ cursor: 'pointer' }}
                     >
-                      {d?.in || 0}
-                    </CTableDataCell>
-                    <CTableDataCell
-                      align="middle"
-                      onClick={() => openModalDetail(d)}
-                      style={{ cursor: 'pointer' }}
-                    >
-                      {d?.out || 0}
-                    </CTableDataCell>
-                    <CTableDataCell
-                      align="middle"
-                      onClick={() => openModalDetail(d)}
-                      style={{ cursor: 'pointer' }}
-                    >
-                      {d?.remaining || 0}
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns: 'auto auto auto',
+                          padding: '20px',
+                        }}
+                      >
+                        {d?.banners?.map((b, idx) => {
+                          return (
+                            <div key={idx} style={{ margin: '20px' }}>
+                              <img alt="banners" src={b} width={100} />
+                            </div>
+                          )
+                        })}
+                      </div>
                     </CTableDataCell>
                     <CTableDataCell align="middle">
-                      <CDropdown>
-                        <CDropdownToggle color="transparent"></CDropdownToggle>
-                        <CDropdownMenu className="dropdown-container">
-                          <CDropdownItem href="#" onClick={() => onEdit(d?.id)}>
-                            Edit
-                          </CDropdownItem>
-                          <CDropdownItem
-                            href="#"
-                            onClick={() => {
-                              setIdToDelete(d?.id)
-                              setModalConfirmDelete(true)
-                            }}
-                          >
-                            Hapus
-                          </CDropdownItem>
-                        </CDropdownMenu>
-                      </CDropdown>
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns: 'auto auto auto',
+                          padding: '20px',
+                        }}
+                      >
+                        {d?.images?.map((b, idx) => {
+                          return (
+                            <div key={idx} style={{ margin: '20px' }}>
+                              <img alt="logo-catalogue" src={b} width={100} />
+                            </div>
+                          )
+                        })}
+                      </div>
+                    </CTableDataCell>
+                    <CTableDataCell
+                      align="middle"
+                      onClick={() => openModalDetail(d)}
+                      style={{ cursor: 'pointer' }}
+                    >
+                      <div style={{ width: '500px' }}>
+                        {d?.featureTexts?.map((c) => c)?.join(', ') || 0}
+                      </div>
+                    </CTableDataCell>
+                    <CTableDataCell align="middle">
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns: 'auto auto auto',
+                          padding: '20px',
+                        }}
+                      >
+                        {d?.featureImages?.map((b, idx) => {
+                          return (
+                            <div key={idx} style={{ margin: '20px' }}>
+                              <img alt="logo-catalogue" src={b} width={100} />
+                            </div>
+                          )
+                        })}
+                      </div>
                     </CTableDataCell>
                   </CTableRow>
                 )

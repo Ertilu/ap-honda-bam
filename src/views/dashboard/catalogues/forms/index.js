@@ -14,7 +14,7 @@ import {
 import { spacing } from 'src/shared/style.const'
 import { useNavigate } from 'react-router-dom'
 import './index.scss'
-import inventoryService from 'src/services/inventory.service'
+import CatalogueService from 'src/services/catalogue.service'
 import { useDispatch, useSelector } from 'react-redux'
 import { RESET_INVENTORY_FORM } from 'src/actionType'
 import Loading from 'src/components/Loading'
@@ -31,7 +31,7 @@ const PageForms = () => {
     let result
     setLoading(true)
     if (formMode === 'add') {
-      result = await inventoryService.create({
+      result = await CatalogueService.create({
         ...data,
         price: parseInt(data.price, 10),
       })
@@ -42,7 +42,7 @@ const PageForms = () => {
       }
       delete payloadEdit?.id
       delete payloadEdit?.remaining
-      result = await inventoryService.update(data?.id, payloadEdit)
+      result = await CatalogueService.update(data?.id, payloadEdit)
     }
     if (result?.id) {
       navigate(-1)
