@@ -9,8 +9,6 @@ import {
   CNavLink,
 } from '@coreui/react'
 import PropTypes from 'prop-types'
-import InStockTable from '../../components/InStockTable'
-import OutStockTable from '../../components/OutStockTable'
 
 function ModalDetail({ visible, onClose, dataInStock, dataOutStock }) {
   const [tab, setTab] = useState(0)
@@ -40,7 +38,6 @@ function ModalDetail({ visible, onClose, dataInStock, dataOutStock }) {
             </CNavLink>
           </CNavItem>
         </CNav>
-        {tab === 0 ? <InStockTable data={dataInStock} /> : <OutStockTable data={dataOutStock} />}
       </CModalBody>
     </CModal>
   )

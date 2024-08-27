@@ -313,18 +313,8 @@ const _navApp = [
     items: [
       {
         component: CNavItem,
-        name: 'Data Barang',
-        to: '/dashboard/inventory',
-      },
-      {
-        component: CNavItem,
-        name: 'Stok Masuk',
-        to: '/dashboard/in-stock',
-      },
-      {
-        component: CNavItem,
-        name: 'Stok Keluar',
-        to: '/dashboard/out-stock',
+        name: 'Catalogues',
+        to: '/dashboard/catalogues',
       },
     ],
   },
