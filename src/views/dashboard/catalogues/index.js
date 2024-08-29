@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react/display-name */
-import React, { forwardRef, useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import {
   CTable,
   CTableRow,
@@ -8,17 +8,13 @@ import {
   CTableHead,
   CTableBody,
   CTableDataCell,
-  CButton,
   CCard,
   CCardBody,
   CCardHeader,
   CInputGroup,
   CFormInput,
   CInputGroupText,
-  CDropdown,
-  CDropdownToggle,
-  CDropdownMenu,
-  CDropdownItem,
+  CButton,
 } from '@coreui/react'
 import { useNavigate } from 'react-router-dom'
 import CIcon from '@coreui/icons-react'
@@ -26,23 +22,12 @@ import { cilSearch } from '@coreui/icons'
 import { useDispatch } from 'react-redux'
 import Loading from 'src/components/Loading'
 import ModalConfirmation from '../../../components/ModalConfirmation'
-import { spacing } from 'src/shared/style.const'
 import { formatRupiah } from 'src/shared/utils/formatter'
 import { useDebounce } from 'src/shared/utils/debounce'
 import CatalogueService from 'src/services/catalogue.service'
 import './index.scss'
-import ModalDetail from './detail'
-import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
-import moment from 'moment'
-
-const CustomDatePickerButton = forwardRef(({ value, onClick }, ref) => {
-  return (
-    <CButton color="primary" style={{ margin: `${spacing[8]} 0` }} onClick={onClick} ref={ref}>
-      {moment(value).format('MMMM YYYY')}
-    </CButton>
-  )
-})
+import { spacing } from 'src/shared/style.const'
 
 const Dashboard = (props) => {
   const dispatch = useDispatch()
@@ -142,6 +127,13 @@ const Dashboard = (props) => {
                 </CInputGroupText>
               </CInputGroup>
             </div>
+            <CButton
+              color="primary"
+              style={{ margin: `${spacing[8]} 0` }}
+              onClick={() => navigate('/dashboard/catalogues/forms')}
+            >
+              Add Data
+            </CButton>
           </div>
         </CCardHeader>
         <CCardBody>

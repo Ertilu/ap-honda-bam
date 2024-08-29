@@ -83,7 +83,7 @@ const routes = [
   { path: '/buttons/dropdowns', name: 'Dropdowns', element: Dropdowns },
   { path: '/buttons/button-groups', name: 'Button Groups', element: ButtonGroups },
   { path: '/charts', name: 'Charts', element: Charts },
-  { path: '/dashboard/forms', name: 'Forms', element: Forms, exact: true },
+  { path: '/dashboard/catalogues/forms', name: 'Forms', element: Forms, exact: true },
   { path: '/forms-example', name: 'Forms Example', element: FormControl, exact: true },
   { path: '/forms/form-control', name: 'Form Control', element: FormControl },
   { path: '/forms/select', name: 'Select', element: Select },

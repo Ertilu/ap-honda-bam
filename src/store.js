@@ -1,12 +1,25 @@
 import { createStore } from 'redux'
-import { EDIT_INVENTORY, RESET_INVENTORY_FORM, SET } from './actionType'
+import { EDIT_CATALOGUE, RESET_CATALOGUE_FORM, SET } from './actionType'
 
 const initialState = {
   sidebarShow: true,
   formMode: 'add',
-  inventoryData: {
+  catalogueData: {
+    banners: [],
+    images: [],
+    featureTexts: [],
+    featureImages: [],
     name: '',
-    price: '',
+    price: 0,
+    description: '',
+    type: '',
+    colors: [
+      {
+        name: '',
+        code: '',
+      },
+    ],
+    logo: '',
   },
 }
 
@@ -14,14 +27,14 @@ const changeState = (state = initialState, { type, ...rest }) => {
   switch (type) {
     case SET:
       return { ...state, ...rest }
-    case EDIT_INVENTORY:
+    case EDIT_CATALOGUE:
       return {
         ...state,
         formMode: 'edit',
-        inventoryData: rest?.inventoryData || initialState.inventoryData,
+        catalogueData: rest?.catalogueData || initialState.catalogueData,
       }
-    case RESET_INVENTORY_FORM:
-      return { ...state, inventoryData: initialState.inventoryData, formMode: 'add' }
+    case RESET_CATALOGUE_FORM:
+      return { ...state, catalogueData: initialState.catalogueData, formMode: 'add' }
     default:
       return state
   }

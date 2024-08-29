@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useMemo, useRef } from 'react'
 import {
   CForm,
   CCardBody,
@@ -10,65 +10,38 @@ import {
   CInputGroup,
   CInputGroupText,
   CButton,
+  CFormTextarea,
+  CFormSelect,
+  CImage,
 } from '@coreui/react'
 import { spacing } from 'src/shared/style.const'
-import { useNavigate } from 'react-router-dom'
 import './index.scss'
-import CatalogueService from 'src/services/catalogue.service'
-import { useDispatch, useSelector } from 'react-redux'
-import { RESET_INVENTORY_FORM } from 'src/actionType'
 import Loading from 'src/components/Loading'
+import { useUtil } from './index.util'
 
 const PageForms = () => {
-  const navigate = useNavigate()
-  const inventoryData = useSelector((state) => state.inventoryData)
-  const formMode = useSelector((state) => state.formMode)
-  const dispatch = useDispatch()
-  const [data, setData] = useState(inventoryData)
-  const [loading, setLoading] = useState(false)
+  const {
+    state: { isButtonDisabled, data, loading, loadingUpload },
+    event: {
+      _submit,
+      onCancel,
+      onChangeColor,
+      onChangeText,
+      removeFeatureText,
+      handleKeyDown,
+      addColor,
+      removeItems,
+      onUploadImages,
+      onUploadImage,
+      removeItem,
+    },
+  } = useUtil()
+  const bannerUploadRef = useRef()
+  const imageUploadRef = useRef()
+  const featureImageUploadRef = useRef()
+  const logoUploadRef = useRef()
 
-  const _submit = useCallback(async () => {
-    let result
-    setLoading(true)
-    if (formMode === 'add') {
-      result = await CatalogueService.create({
-        ...data,
-        price: parseInt(data.price, 10),
-      })
-    } else if (formMode === 'edit') {
-      const payloadEdit = {
-        ...data,
-        price: parseInt(data.price, 10),
-      }
-      delete payloadEdit?.id
-      delete payloadEdit?.remaining
-      result = await CatalogueService.update(data?.id, payloadEdit)
-    }
-    if (result?.id) {
-      navigate(-1)
-    }
-    setLoading(false)
-    dispatch({ type: RESET_INVENTORY_FORM })
-  }, [data, navigate, formMode, dispatch])
-
-  const onChangeText = useCallback(({ target: { value } }, propertyName) => {
-    setData((prev) => ({
-      ...prev,
-      [propertyName]: value,
-    }))
-  }, [])
-
-  const onCancel = useCallback(() => {
-    navigate('/')
-    dispatch({ type: 'reset_inventory_form' })
-  }, [navigate, dispatch])
-
-  const isButtonDisabled = useMemo(
-    () => data?.name === '' || data?.price < 1 || loading,
-    [data, loading],
-  )
-
-  const renderAsterisk = () => <span style={{ color: 'red' }}>*</span>
+  const renderAsterisk = useMemo(() => <span style={{ color: 'red' }}>*</span>, [])
 
   return (
     <div
@@ -83,29 +56,313 @@ const PageForms = () => {
           </CCardHeader>
           <CCardBody>
             <CForm>
-              <CFormLabel htmlFor="input-name-label">Nama Barang {renderAsterisk()}</CFormLabel>
+              <CFormLabel htmlFor="input-name-label">Name {renderAsterisk}</CFormLabel>
               <CFormInput
                 type="text"
                 id="input-name"
-                placeholder="Masukkan Nama Barang"
+                placeholder="Input Name"
                 onChange={(e) => onChangeText(e, 'name')}
                 value={data.name}
               />
 
               <CFormLabel htmlFor="input-harga-label" style={{ marginTop: spacing[16] }}>
-                Harga {renderAsterisk()}
+                Price {renderAsterisk}
               </CFormLabel>
               <CInputGroup>
                 <CInputGroupText>Rp</CInputGroupText>
                 <CFormInput
                   type="number"
                   id="input-harga"
-                  placeholder="Masukkan Harga"
+                  placeholder="Input Price"
                   min={1}
                   onChange={(e) => onChangeText(e, 'price')}
                   value={data.price}
                 />
               </CInputGroup>
+
+              <CFormLabel htmlFor="input-harga-label" style={{ marginTop: spacing[16] }}>
+                Description {renderAsterisk}
+              </CFormLabel>
+              <CInputGroup>
+                <CFormTextarea
+                  id="description"
+                  placeholder="Input Description"
+                  rows={3}
+                  onChange={(e) => onChangeText(e, 'description')}
+                ></CFormTextarea>
+              </CInputGroup>
+
+              <CFormLabel htmlFor="input-harga-label" style={{ marginTop: spacing[16] }}>
+                Type {renderAsterisk}
+              </CFormLabel>
+              <CInputGroup>
+                <CFormSelect
+                  aria-label="Select Type"
+                  placeholder="Select Type"
+                  options={[
+                    'Select Type',
+                    { label: 'Matic', value: 'matic' },
+                    { label: 'Sport', value: 'sport' },
+                    { label: 'Cub', value: 'cub' },
+                  ]}
+                  onChange={(e) =>
+                    e.target.value === 'Select Type'
+                      ? onChangeText({ target: { value: '' } }, 'type')
+                      : onChangeText(e, 'type')
+                  }
+                />
+              </CInputGroup>
+
+              <CFormLabel htmlFor="input-harga-label" style={{ marginTop: spacing[16] }}>
+                Colors {renderAsterisk}
+              </CFormLabel>
+              {data?.colors?.map((item, idx) => {
+                return (
+                  <CInputGroup key={idx} className="mb-2">
+                    <CFormInput
+                      type="text"
+                      id="input-color-name"
+                      placeholder="Color Name"
+                      onChange={(e) => onChangeColor(e, 'name', idx)}
+                      value={item.name}
+                    />
+                    <CFormInput
+                      type="text"
+                      id="input-hex"
+                      placeholder="Color Hex"
+                      onChange={(e) => onChangeColor(e, 'code', idx)}
+                      value={item.code}
+                    />
+                    <div className="d-grid" style={{ width: '100px' }}>
+                      {idx === data?.colors.length - 1 ? (
+                        <CButton color="primary" onClick={addColor}>
+                          Add
+                        </CButton>
+                      ) : (
+                        <CButton color="danger" onClick={() => removeItems(idx, 'colors')}>
+                          Remove
+                        </CButton>
+                      )}
+                    </div>
+                  </CInputGroup>
+                )
+              })}
+
+              <CFormLabel htmlFor="input-harga-label" style={{ marginTop: spacing[16] }}>
+                Logo {renderAsterisk}
+              </CFormLabel>
+              <div className="d-grid">
+                <CInputGroup>
+                  {data.logo && data.logo.length ? (
+                    <div className="col-lg-4 col-sm-12 position-relative">
+                      <CImage alt={`logo}`} fluid thumbnail src={data?.logo} height={'auto'} />
+                      <div
+                        style={{
+                          position: 'absolute',
+                          top: 10,
+                          right: 10,
+                        }}
+                      >
+                        <span className="remove-image" onClick={() => removeItem('logo')}>
+                          &times;
+                        </span>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <div>
+                        <CButton
+                          color="primary"
+                          onClick={() => logoUploadRef.current.click()}
+                          className="m-2"
+                          disabled={loadingUpload.logo}
+                        >
+                          {loadingUpload.logo ? 'Uploading...' : 'Upload Logo'}
+                        </CButton>
+                      </div>
+                      <input
+                        type="file"
+                        id="logoFile"
+                        accept="image/*"
+                        onChange={(e) => onUploadImage(e, 'logo')}
+                        ref={logoUploadRef}
+                        style={{ display: 'none' }}
+                      ></input>
+                    </>
+                  )}
+                </CInputGroup>
+              </div>
+
+              <CFormLabel htmlFor="input-harga-label" style={{ marginTop: spacing[16] }}>
+                Banners {renderAsterisk}
+              </CFormLabel>
+              <div className="d-grid">
+                <CInputGroup>
+                  {data?.banners?.map((img, index) => {
+                    return (
+                      <div key={index} className="col-lg-4 col-sm-12 position-relative">
+                        <CImage alt={`banner-${index}`} fluid thumbnail src={img} height={'auto'} />
+                        <div
+                          style={{
+                            position: 'absolute',
+                            top: 10,
+                            right: 10,
+                          }}
+                        >
+                          <span
+                            className="remove-image"
+                            onClick={() => removeItems(index, 'banners')}
+                          >
+                            &times;
+                          </span>
+                        </div>
+                      </div>
+                    )
+                  })}
+                  <div>
+                    <CButton
+                      color="primary"
+                      onClick={() => bannerUploadRef.current.click()}
+                      className="m-2"
+                      disabled={loadingUpload.banners}
+                    >
+                      {loadingUpload.banners ? 'Uploading...' : 'Upload Banner'}
+                    </CButton>
+                  </div>
+                  <input
+                    type="file"
+                    id="bannersFile"
+                    accept="image/*"
+                    onChange={(e) => onUploadImages(e, 'banners')}
+                    ref={bannerUploadRef}
+                    style={{ display: 'none' }}
+                  ></input>
+                </CInputGroup>
+              </div>
+
+              <CFormLabel htmlFor="input-harga-label" style={{ marginTop: spacing[16] }}>
+                Images {renderAsterisk}
+              </CFormLabel>
+              <div className="d-grid">
+                <CInputGroup>
+                  {data?.images?.map((img, index) => {
+                    return (
+                      <div key={index} className="col-lg-4 col-sm-12 position-relative">
+                        <CImage alt={`image-${index}`} fluid thumbnail src={img} height={'auto'} />
+                        <div
+                          style={{
+                            position: 'absolute',
+                            top: 10,
+                            right: 10,
+                          }}
+                        >
+                          <span
+                            className="remove-image"
+                            onClick={() => removeItems(index, 'images')}
+                          >
+                            &times;
+                          </span>
+                        </div>
+                      </div>
+                    )
+                  })}
+                  <div>
+                    <CButton
+                      color="primary"
+                      onClick={() => imageUploadRef.current.click()}
+                      className="m-2"
+                      disabled={loadingUpload.images}
+                    >
+                      {loadingUpload.images ? 'Uploading...' : 'Upload Image'}
+                    </CButton>
+                  </div>
+                  <input
+                    type="file"
+                    id="imagesFile"
+                    accept="image/*"
+                    onChange={(e) => onUploadImages(e, 'images')}
+                    ref={imageUploadRef}
+                    style={{ display: 'none' }}
+                  ></input>
+                </CInputGroup>
+              </div>
+
+              <div>
+                <CFormLabel htmlFor="input-harga-label" style={{ marginTop: spacing[16] }}>
+                  Feature Text
+                </CFormLabel>
+                <CInputGroup>
+                  <div className="tags-input-container">
+                    {data?.featureTexts?.map((f, index) => (
+                      <div className="tag-item" key={index}>
+                        <span className="text">{f}</span>
+                        <span className="close" onClick={() => removeFeatureText(index)}>
+                          &times;
+                        </span>
+                      </div>
+                    ))}
+                    <input
+                      type="text"
+                      className="tags-input form-control"
+                      placeholder="Input Feature Texts"
+                      onKeyDown={handleKeyDown}
+                    />
+                  </div>
+                </CInputGroup>
+              </div>
+
+              <CFormLabel htmlFor="input-harga-label" style={{ marginTop: spacing[16] }}>
+                Feature Images {renderAsterisk}
+              </CFormLabel>
+              <div className="d-grid">
+                <CInputGroup>
+                  {data?.featureImages?.map((img, index) => {
+                    return (
+                      <div key={index} className="col-lg-4 col-sm-12 position-relative">
+                        <CImage
+                          alt={`featureImage-${index}`}
+                          fluid
+                          thumbnail
+                          src={img}
+                          height={'auto'}
+                        />
+                        <div
+                          style={{
+                            position: 'absolute',
+                            top: 10,
+                            right: 10,
+                          }}
+                        >
+                          <span
+                            className="remove-image"
+                            onClick={() => removeItems(index, 'featureImages')}
+                          >
+                            &times;
+                          </span>
+                        </div>
+                      </div>
+                    )
+                  })}
+                  <div>
+                    <CButton
+                      color="primary"
+                      onClick={() => featureImageUploadRef.current.click()}
+                      className="m-2"
+                      disabled={loadingUpload.featureImages}
+                    >
+                      {loadingUpload.featureImages ? 'Uploading...' : 'Upload Feature Image'}
+                    </CButton>
+                  </div>
+                  <input
+                    type="file"
+                    id="featureImagesFile"
+                    accept="image/*"
+                    onChange={(e) => onUploadImages(e, 'featureImages')}
+                    ref={featureImageUploadRef}
+                    style={{ display: 'none' }}
+                  ></input>
+                </CInputGroup>
+              </div>
             </CForm>
 
             <div className="d-flex justify-content-end" style={{ marginTop: spacing[24] }}>
