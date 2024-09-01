@@ -12,14 +12,23 @@ const initialState = {
     name: '',
     price: 0,
     description: '',
-    type: '',
+    category: '',
     colors: [
       {
         name: '',
         code: '',
+        code2: '',
+        code3: '',
+        image: '',
       },
     ],
     logo: '',
+    types: [
+      {
+        name: '',
+        price: '',
+      },
+    ],
   },
 }
 

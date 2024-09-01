@@ -148,7 +148,7 @@ const Dashboard = (props) => {
                 </CTableHeaderCell>
                 <CTableHeaderCell scope="col">Description</CTableHeaderCell>
                 <CTableHeaderCell scope="col" width={150}>
-                  Type
+                  Category
                 </CTableHeaderCell>
                 <CTableHeaderCell scope="col" width={550}>
                   Colors
@@ -210,7 +210,7 @@ const Dashboard = (props) => {
                       onClick={() => openModalDetail(d)}
                       style={{ cursor: 'pointer' }}
                     >
-                      {d?.type || 0}
+                      {d?.category || '-'}
                     </CTableDataCell>
                     <CTableDataCell align="middle" onClick={() => openModalDetail(d)}>
                       {d?.colors?.map((c) => c.name)?.join(', ') || '-'}

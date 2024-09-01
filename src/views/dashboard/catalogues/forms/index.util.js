@@ -18,6 +18,7 @@ export const useUtil = () => {
     featureImages: false,
     logo: false,
   })
+  const [loadingColorImage, setLoadingColorImage] = useState({})
 
   const _submit = useCallback(async () => {
     let result
@@ -58,14 +59,15 @@ export const useUtil = () => {
   const isButtonDisabled = useMemo(
     () =>
       data?.name === '' ||
-      data?.price < 1 ||
-      data.colors[0].name === '' ||
-      data.colors[0].code === '' ||
-      data.description === '' ||
+      parseInt(data?.price) < 1 ||
+      data?.colors[0].name === '' ||
+      data?.colors[0].code === '' ||
+      data?.description === '' ||
       !data.featureImages?.length ||
-      !data.images?.length ||
       !data.banners?.length ||
-      data?.type === '' ||
+      data?.types[0].name === '' ||
+      data?.types[0].price === '' ||
+      data?.category === '' ||
       data?.logo === '' ||
       loading,
     [data, loading],
@@ -196,12 +198,76 @@ export const useUtil = () => {
     })
   }, [])
 
+  const onUploadColorImages = useCallback(async (e, idx) => {
+    const formData = new FormData()
+    if (e?.target?.files?.length) {
+      formData.append('image', e?.target?.files[0])
+    }
+    setLoadingColorImage((prev) => {
+      const loading = { ...prev, [idx]: true }
+      return loading
+    })
+    const result = await ImageService.upload(formData)
+
+    setData((prev) => {
+      const newData = {
+        ...prev,
+      }
+
+      if (newData.colors[idx]) {
+        newData.colors[idx].image = result.image.url
+      }
+
+      return newData
+    })
+    setLoadingColorImage((prev) => {
+      const loading = { ...prev, [idx]: false }
+      return loading
+    })
+
+    e.target.value = ''
+  }, [])
+
+  const onRemoveColorImage = useCallback((idx) => {
+    setData((prev) => {
+      const newData = {
+        ...prev,
+      }
+      newData.colors[idx].image = ''
+      return newData
+    })
+  }, [])
+
+  const onChangeType = useCallback(({ target: { value } }, propertyName, index) => {
+    setData((prev) => {
+      const newData = {
+        ...prev,
+      }
+      newData.types[index][propertyName] = value
+      return newData
+    })
+  }, [])
+
+  const addType = useCallback(() => {
+    setData((prev) => {
+      const newData = {
+        ...prev,
+      }
+      newData.types.push({
+        name: '',
+        price: '',
+      })
+      return newData
+    })
+  }, [])
+
   return {
     state: {
       isButtonDisabled,
       loading,
       data,
       loadingUpload,
+      loadingColorImage,
     },
     event: {
       _submit,
@@ -217,6 +283,10 @@ export const useUtil = () => {
       onUploadImages,
       onUploadImage,
       removeItem,
+      onUploadColorImages,
+      onRemoveColorImage,
+      onChangeType,
+      addType,
     },
   }
 }
