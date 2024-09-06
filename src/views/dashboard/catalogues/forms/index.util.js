@@ -55,7 +55,7 @@ export const useUtil = () => {
     navigate('/')
     dispatch({ type: RESET_CATALOGUE_FORM })
   }, [navigate, dispatch])
-  console.log('data', data)
+
   const isButtonDisabled = useMemo(
     () =>
       data?.name === '' ||

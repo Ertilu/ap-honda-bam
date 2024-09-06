@@ -1,5 +1,6 @@
 import { createStore } from 'redux'
-import { EDIT_CATALOGUE, RESET_CATALOGUE_FORM, SET } from './actionType'
+import { EDIT_CATALOGUE, RESET_CATALOGUE_FORM, RESET_PROMO_FORM, SET } from './actionType'
+import { toLocalISOString } from './shared/utils'
 
 const initialState = {
   sidebarShow: true,
@@ -30,6 +31,12 @@ const initialState = {
       },
     ],
   },
+  promoData: {
+    name: '',
+    images: [],
+    startDate: toLocalISOString(new Date()),
+    endDate: toLocalISOString(new Date()),
+  },
 }
 
 const changeState = (state = initialState, { type, ...rest }) => {
@@ -44,6 +51,8 @@ const changeState = (state = initialState, { type, ...rest }) => {
       }
     case RESET_CATALOGUE_FORM:
       return { ...state, catalogueData: initialState.catalogueData, formMode: 'add' }
+    case RESET_PROMO_FORM:
+      return { ...state, promoData: initialState.promoData, formMode: 'add' }
     default:
       return state
   }
