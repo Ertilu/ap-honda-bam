@@ -7,7 +7,9 @@ import { ImageService } from 'src/services'
 
 export const useUtil = () => {
   const navigate = useNavigate()
-  const promoData = useSelector((state) => state.promoData)
+  const promoData = useSelector((state) => {
+    return Object.assign({}, state.promoData)
+  })
   const formMode = useSelector((state) => state.formMode)
   const dispatch = useDispatch()
   const [data, setData] = useState(promoData)
@@ -19,6 +21,7 @@ export const useUtil = () => {
     logo: false,
   })
   const [loadingColorImage, setLoadingColorImage] = useState({})
+  console.log('promoData', promoData)
 
   const _submit = useCallback(async () => {
     let result
