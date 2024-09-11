@@ -15,6 +15,10 @@ import {
   CFormInput,
   CInputGroupText,
   CButton,
+  CDropdown,
+  CDropdownToggle,
+  CDropdownMenu,
+  CDropdownItem,
 } from '@coreui/react'
 import { useNavigate } from 'react-router-dom'
 import CIcon from '@coreui/icons-react'
@@ -166,6 +170,7 @@ const Dashboard = (props) => {
                 <CTableHeaderCell scope="col" width={'auto'}>
                   Feature Images
                 </CTableHeaderCell>
+                <CTableHeaderCell scope="col">Action</CTableHeaderCell>
               </CTableRow>
             </CTableHead>
             <CTableBody>
@@ -285,6 +290,25 @@ const Dashboard = (props) => {
                           )
                         })}
                       </div>
+                    </CTableDataCell>
+                    <CTableDataCell align="middle">
+                      <CDropdown>
+                        <CDropdownToggle color="transparent"></CDropdownToggle>
+                        <CDropdownMenu className="dropdown-container">
+                          <CDropdownItem href="#" onClick={() => onEdit(d?.id)}>
+                            Edit
+                          </CDropdownItem>
+                          <CDropdownItem
+                            href="#"
+                            onClick={() => {
+                              setIdToDelete(d?.id)
+                              setModalConfirmDelete(true)
+                            }}
+                          >
+                            Hapus
+                          </CDropdownItem>
+                        </CDropdownMenu>
+                      </CDropdown>
                     </CTableDataCell>
                   </CTableRow>
                 )
