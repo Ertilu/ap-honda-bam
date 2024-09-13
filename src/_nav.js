@@ -316,6 +316,11 @@ const _navApp = [
         name: 'Catalogues',
         to: '/dashboard/catalogues',
       },
+      {
+        component: CNavItem,
+        name: 'Promo',
+        to: '/dashboard/promo',
+      },
     ],
   },
 ]
