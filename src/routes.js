@@ -2,6 +2,8 @@ import React from 'react'
 import { lazyRetry } from './shared/utils/lazy-retry'
 
 const Dashboard = React.lazy(() => import('./views/dashboard/catalogues'))
+const Promo = React.lazy(() => import('./views/dashboard/promos'))
+const FormPromos = React.lazy(() => import('./views/dashboard/promos/forms'))
 const Colors = React.lazy(() => import('./views/theme/colors/Colors'))
 const Typography = React.lazy(() => import('./views/theme/typography/Typography'))
 
@@ -60,7 +62,7 @@ const Widgets = React.lazy(() => import('./views/widgets/Widgets'))
 const routes = [
   { path: '/', exact: true, name: 'Home' },
   { path: '/dashboard/catalogues', name: 'Dashboard Catalogues', element: Dashboard },
-  { path: '/dashboard/promo', name: 'Dashboard Promo', element: Dashboard },
+  { path: '/dashboard/promos', name: 'Dashboard Promos', element: Promo },
   { path: '/theme', name: 'Theme', element: Colors, exact: true },
   { path: '/theme/colors', name: 'Colors', element: Colors },
   { path: '/theme/typography', name: 'Typography', element: Typography },
@@ -85,6 +87,7 @@ const routes = [
   { path: '/buttons/button-groups', name: 'Button Groups', element: ButtonGroups },
   { path: '/charts', name: 'Charts', element: Charts },
   { path: '/dashboard/catalogues/forms', name: 'Forms', element: Forms, exact: true },
+  { path: '/dashboard/promos/forms', name: 'Forms', element: FormPromos, exact: true },
   { path: '/forms-example', name: 'Forms Example', element: FormControl, exact: true },
   { path: '/forms/form-control', name: 'Form Control', element: FormControl },
   { path: '/forms/select', name: 'Select', element: Select },

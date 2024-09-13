@@ -15,10 +15,6 @@ import {
   CFormInput,
   CInputGroupText,
   CButton,
-  CDropdown,
-  CDropdownToggle,
-  CDropdownMenu,
-  CDropdownItem,
 } from '@coreui/react'
 import { useNavigate } from 'react-router-dom'
 import CIcon from '@coreui/icons-react'
@@ -28,10 +24,11 @@ import Loading from 'src/components/Loading'
 import ModalConfirmation from '../../../components/ModalConfirmation'
 import { formatRupiah } from 'src/shared/utils/formatter'
 import { useDebounce } from 'src/shared/utils/debounce'
-import CatalogueService from 'src/services/catalogue.service'
+import PromoService from 'src/services/promo.service'
 import './index.scss'
 import 'react-datepicker/dist/react-datepicker.css'
 import { spacing } from 'src/shared/style.const'
+import * as moment from 'moment'
 
 const Dashboard = (props) => {
   const dispatch = useDispatch()
@@ -53,10 +50,8 @@ const Dashboard = (props) => {
   }, [debouncedValue, filter])
 
   const getData = useCallback(() => {
-    CatalogueService.getAllData({
+    PromoService.getAllData({
       search: debouncedValue,
-      filterStockYear: filter.filterDate.getFullYear(),
-      filterStockMonth: filter.filterDate.getMonth(),
     })
       .then((res) => {
         setLoading(false)
@@ -72,7 +67,7 @@ const Dashboard = (props) => {
   const onEdit = useCallback(
     async (id) => {
       setLoading(true)
-      const res = await CatalogueService.getDetail(id)
+      const res = await PromoService.getDetail(id)
       if (res?.id) {
         setLoading(false)
         dispatch({
@@ -92,7 +87,7 @@ const Dashboard = (props) => {
   const onDelete = useCallback(async () => {
     setLoading(true)
     setModalConfirmDelete(false)
-    await CatalogueService.delete(idToDelete)
+    await PromoService.delete(idToDelete)
     getData()
   }, [idToDelete, getData])
 
@@ -116,7 +111,7 @@ const Dashboard = (props) => {
         <CCardHeader>
           <div>
             <div className="d-flex justify-content-between align-items-center mt-2">
-              <h4>Catalogues</h4>
+              <h4>Promos</h4>
               <CInputGroup style={{ width: 300, height: 30 }}>
                 <CFormInput
                   placeholder="Cari Data"
@@ -134,7 +129,7 @@ const Dashboard = (props) => {
             <CButton
               color="primary"
               style={{ margin: `${spacing[8]} 0` }}
-              onClick={() => navigate('/dashboard/catalogues/forms')}
+              onClick={() => navigate('/dashboard/promos/forms')}
             >
               Add Data
             </CButton>
@@ -147,30 +142,15 @@ const Dashboard = (props) => {
                 <CTableHeaderCell scope="col" width={500}>
                   Name
                 </CTableHeaderCell>
-                <CTableHeaderCell scope="col" width={250}>
-                  Price
-                </CTableHeaderCell>
-                <CTableHeaderCell scope="col">Description</CTableHeaderCell>
-                <CTableHeaderCell scope="col" width={150}>
-                  Category
-                </CTableHeaderCell>
-                <CTableHeaderCell scope="col" width={550}>
-                  Colors
-                </CTableHeaderCell>
-                <CTableHeaderCell scope="col">Logo</CTableHeaderCell>
-                <CTableHeaderCell scope="col" width={'auto'}>
-                  Banners
-                </CTableHeaderCell>
-                <CTableHeaderCell scope="col" width={'auto'}>
+                <CTableHeaderCell scope="col" width={500}>
                   Images
                 </CTableHeaderCell>
-                <CTableHeaderCell scope="col" width={'auto'}>
-                  Feature Texts
+                <CTableHeaderCell scope="col" width={150}>
+                  Start Date
                 </CTableHeaderCell>
-                <CTableHeaderCell scope="col" width={'auto'}>
-                  Feature Images
+                <CTableHeaderCell scope="col" width={550}>
+                  End Date
                 </CTableHeaderCell>
-                <CTableHeaderCell scope="col">Action</CTableHeaderCell>
               </CTableRow>
             </CTableHead>
             <CTableBody>
@@ -190,48 +170,6 @@ const Dashboard = (props) => {
                       onClick={() => openModalDetail(d)}
                       style={{ cursor: 'pointer' }}
                     >
-                      {formatRupiah(d?.price || 0)}
-                    </CTableDataCell>
-                    <CTableDataCell
-                      align="middle"
-                      onClick={() => openModalDetail(d)}
-                      style={{ cursor: 'pointer' }}
-                    >
-                      <div
-                        style={{
-                          display: 'block',
-                          maxHeight: '6em',
-                          textOverflow: 'ellipsis',
-                          wordWrap: 'break-word',
-                          overflow: 'hidden',
-                          width: '450px',
-                        }}
-                      >
-                        {d?.description || '-'}
-                      </div>
-                    </CTableDataCell>
-                    <CTableDataCell
-                      align="middle"
-                      onClick={() => openModalDetail(d)}
-                      style={{ cursor: 'pointer' }}
-                    >
-                      {d?.category || '-'}
-                    </CTableDataCell>
-                    <CTableDataCell align="middle" onClick={() => openModalDetail(d)}>
-                      {d?.colors?.map((c) => c.name)?.join(', ') || '-'}
-                    </CTableDataCell>
-                    <CTableDataCell
-                      align="middle"
-                      onClick={() => openModalDetail(d)}
-                      style={{ cursor: 'pointer' }}
-                    >
-                      <img alt="logo-catalogue" src={d?.logo} width={50} />
-                    </CTableDataCell>
-                    <CTableDataCell
-                      align="middle"
-                      onClick={() => openModalDetail(d)}
-                      style={{ cursor: 'pointer' }}
-                    >
                       <div
                         style={{
                           display: 'grid',
@@ -239,76 +177,29 @@ const Dashboard = (props) => {
                           padding: '20px',
                         }}
                       >
-                        {d?.banners?.map((b, idx) => {
+                        {[...d?.images]?.map((i, idx) => {
                           return (
                             <div key={idx} style={{ margin: '20px' }}>
-                              <img alt="banners" src={b} width={100} />
+                              <img alt="images" src={i} width={100} />
                             </div>
                           )
                         })}
                       </div>
                     </CTableDataCell>
-                    <CTableDataCell align="middle">
-                      <div
-                        style={{
-                          display: 'grid',
-                          gridTemplateColumns: 'auto auto auto',
-                          padding: '20px',
-                        }}
-                      >
-                        {d?.images?.map((b, idx) => {
-                          return (
-                            <div key={idx} style={{ margin: '20px' }}>
-                              <img alt="logo-catalogue" src={b} width={100} />
-                            </div>
-                          )
-                        })}
-                      </div>
+
+                    <CTableDataCell
+                      align="middle"
+                      onClick={() => openModalDetail(d)}
+                      style={{ cursor: 'pointer' }}
+                    >
+                      {moment(d.startDate).format('DD-MM-YYYY HH:mm:ss')}
                     </CTableDataCell>
                     <CTableDataCell
                       align="middle"
                       onClick={() => openModalDetail(d)}
                       style={{ cursor: 'pointer' }}
                     >
-                      <div style={{ width: '500px' }}>
-                        {d?.featureTexts?.map((c) => c)?.join(', ') || 0}
-                      </div>
-                    </CTableDataCell>
-                    <CTableDataCell align="middle">
-                      <div
-                        style={{
-                          display: 'grid',
-                          gridTemplateColumns: 'auto auto auto',
-                          padding: '20px',
-                        }}
-                      >
-                        {d?.featureImages?.map((b, idx) => {
-                          return (
-                            <div key={idx} style={{ margin: '20px' }}>
-                              <img alt="logo-catalogue" src={b} width={100} />
-                            </div>
-                          )
-                        })}
-                      </div>
-                    </CTableDataCell>
-                    <CTableDataCell align="middle">
-                      <CDropdown>
-                        <CDropdownToggle color="transparent"></CDropdownToggle>
-                        <CDropdownMenu className="dropdown-container">
-                          <CDropdownItem href="#" onClick={() => onEdit(d?.id)}>
-                            Edit
-                          </CDropdownItem>
-                          <CDropdownItem
-                            href="#"
-                            onClick={() => {
-                              setIdToDelete(d?.id)
-                              setModalConfirmDelete(true)
-                            }}
-                          >
-                            Hapus
-                          </CDropdownItem>
-                        </CDropdownMenu>
-                      </CDropdown>
+                      {moment(d.endDate).format('DD-MM-YYYY HH:mm:ss')}
                     </CTableDataCell>
                   </CTableRow>
                 )

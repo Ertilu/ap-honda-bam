@@ -318,8 +318,8 @@ const _navApp = [
       },
       {
         component: CNavItem,
-        name: 'Promo',
-        to: '/dashboard/promo',
+        name: 'Promos',
+        to: '/dashboard/promos',
       },
     ],
   },

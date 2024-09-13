@@ -1,36 +1,7 @@
 import { createStore } from 'redux'
-import { EDIT_CATALOGUE, RESET_CATALOGUE_FORM, SET } from './actionType'
-
-const initialState = {
-  sidebarShow: true,
-  formMode: 'add',
-  catalogueData: {
-    banners: [],
-    images: [],
-    featureTexts: [],
-    featureImages: [],
-    name: '',
-    price: 0,
-    description: '',
-    category: '',
-    colors: [
-      {
-        name: '',
-        code: '',
-        code2: '',
-        code3: '',
-        image: '',
-      },
-    ],
-    logo: '',
-    types: [
-      {
-        name: '',
-        price: '',
-      },
-    ],
-  },
-}
+import { EDIT_CATALOGUE, RESET_CATALOGUE_FORM, RESET_PROMO_FORM, SET } from './actionType'
+import { initialState } from './initialData'
+import { toLocalISOString } from './shared/utils'
 
 const changeState = (state = initialState, { type, ...rest }) => {
   switch (type) {
@@ -43,7 +14,47 @@ const changeState = (state = initialState, { type, ...rest }) => {
         catalogueData: rest?.catalogueData || initialState.catalogueData,
       }
     case RESET_CATALOGUE_FORM:
-      return { ...state, catalogueData: initialState.catalogueData, formMode: 'add' }
+      return {
+        ...state,
+        catalogueData: {
+          banners: [],
+          images: [],
+          featureTexts: [],
+          featureImages: [],
+          name: '',
+          price: 0,
+          description: '',
+          category: '',
+          colors: [
+            {
+              name: '',
+              code: '',
+              code2: '',
+              code3: '',
+              image: '',
+            },
+          ],
+          logo: '',
+          types: [
+            {
+              name: '',
+              price: '',
+            },
+          ],
+        },
+        formMode: 'add',
+      }
+    case RESET_PROMO_FORM:
+      return {
+        ...state,
+        promoData: {
+          name: '',
+          images: [],
+          startDate: toLocalISOString(new Date()),
+          endDate: toLocalISOString(new Date()),
+        },
+        formMode: 'add',
+      }
     default:
       return state
   }
