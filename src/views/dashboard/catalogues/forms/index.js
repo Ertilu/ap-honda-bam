@@ -25,7 +25,7 @@ const PageForms = () => {
     event: {
       _submit,
       onCancel,
-      onChangeColor,
+      onChangeNestedText,
       onChangeText,
       removeFeatureText,
       handleKeyDown,
@@ -35,9 +35,11 @@ const PageForms = () => {
       onUploadImage,
       removeItem,
       onUploadColorImages,
-      onRemoveColorImage,
+      onRemoveNestedImage,
       onChangeType,
       addType,
+      onUploadFeatureImages,
+      addFeatures,
     },
   } = useUtil()
   const bannerUploadRef = useRef()
@@ -128,28 +130,28 @@ const PageForms = () => {
                       type="text"
                       id="input-color-name"
                       placeholder="Color Name"
-                      onChange={(e) => onChangeColor(e, 'name', idx)}
+                      onChange={(e) => onChangeNestedText(e, 'name', idx, 'colors')}
                       value={item.name}
                     />
                     <CFormInput
                       type="text"
                       id="input-hex"
                       placeholder="Color Hex"
-                      onChange={(e) => onChangeColor(e, 'code', idx)}
+                      onChange={(e) => onChangeNestedText(e, 'code', idx, 'colors')}
                       value={item.code}
                     />
                     <CFormInput
                       type="text"
                       id="input-hex"
                       placeholder="Color Hex 2"
-                      onChange={(e) => onChangeColor(e, 'code2', idx)}
+                      onChange={(e) => onChangeNestedText(e, 'code2', idx, 'colors')}
                       value={item.code2}
                     />
                     <CFormInput
                       type="text"
                       id="input-hex"
                       placeholder="Color Hex 3"
-                      onChange={(e) => onChangeColor(e, 'code3', idx)}
+                      onChange={(e) => onChangeNestedText(e, 'code3', idx, 'colors')}
                       value={item.code3}
                     />
                     {item?.image && item?.image?.length ? (
@@ -162,7 +164,10 @@ const PageForms = () => {
                             right: 10,
                           }}
                         >
-                          <span className="remove-image" onClick={() => onRemoveColorImage(idx)}>
+                          <span
+                            className="remove-image"
+                            onClick={() => onRemoveNestedImage(idx, 'colors')}
+                          >
                             &times;
                           </span>
                         </div>
@@ -343,7 +348,7 @@ const PageForms = () => {
                 </CInputGroup>
               </div>
 
-              <div>
+              {/* <div>
                 <CFormLabel htmlFor="input-harga-label" style={{ marginTop: spacing[16] }}>
                   Feature Text
                 </CFormLabel>
@@ -418,7 +423,82 @@ const PageForms = () => {
                     style={{ display: 'none' }}
                   ></input>
                 </CInputGroup>
-              </div>
+              </div> */}
+
+              <CFormLabel htmlFor="input-harga-label" style={{ marginTop: spacing[16] }}>
+                Features {renderAsterisk}
+              </CFormLabel>
+              {data?.features?.map((item, idx) => {
+                return (
+                  <CInputGroup key={idx} className="mb-2">
+                    <CFormInput
+                      type="text"
+                      id="input-feature-title"
+                      placeholder="Title"
+                      onChange={(e) => onChangeNestedText(e, 'title', idx, 'features')}
+                      value={item.title}
+                    />
+                    <CFormInput
+                      type="text"
+                      id="input-Text"
+                      placeholder="Color Text"
+                      onChange={(e) => onChangeNestedText(e, 'text', idx, 'features')}
+                      value={item.text}
+                    />
+                    {item?.image && item?.image?.length ? (
+                      <div className="col-lg-4 col-sm-12 position-relative">
+                        <CImage alt={`logo}`} fluid thumbnail src={item?.image} height={'auto'} />
+                        <div
+                          style={{
+                            position: 'absolute',
+                            top: 10,
+                            right: 10,
+                          }}
+                        >
+                          <span
+                            className="remove-image"
+                            onClick={() => onRemoveNestedImage(idx, 'features')}
+                          >
+                            &times;
+                          </span>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <div>
+                          <CButton
+                            color="primary"
+                            onClick={() => featureImageUploadRef.current.click()}
+                            className="m-2"
+                            disabled={loadingColorImage[idx]}
+                          >
+                            {loadingColorImage[idx] ? 'Uploading...' : 'Upload Image'}
+                          </CButton>
+                        </div>
+                        <input
+                          type="file"
+                          id="logoFile"
+                          accept="image/*"
+                          onChange={(e) => onUploadFeatureImages(e, idx)}
+                          ref={featureImageUploadRef}
+                          style={{ display: 'none' }}
+                        ></input>
+                      </>
+                    )}
+                    <div className="d-grid" style={{ width: '100px' }}>
+                      {idx === data?.colors.length - 1 ? (
+                        <CButton color="primary" onClick={addFeatures}>
+                          Add
+                        </CButton>
+                      ) : (
+                        <CButton color="danger" onClick={() => removeItems(idx, 'features')}>
+                          Remove
+                        </CButton>
+                      )}
+                    </div>
+                  </CInputGroup>
+                )
+              })}
 
               <CFormLabel htmlFor="input-harga-label" style={{ marginTop: spacing[16] }}>
                 Types {renderAsterisk}

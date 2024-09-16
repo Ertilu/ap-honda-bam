@@ -13,8 +13,6 @@ export const initialState = {
   catalogueData: {
     banners: [],
     images: [],
-    featureTexts: [],
-    featureImages: [],
     name: '',
     price: 0,
     description: '',
@@ -33,6 +31,13 @@ export const initialState = {
       {
         name: '',
         price: '',
+      },
+    ],
+    features: [
+      {
+        title: '',
+        text: '',
+        image: '',
       },
     ],
   },

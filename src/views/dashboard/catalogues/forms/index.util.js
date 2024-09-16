@@ -19,6 +19,7 @@ export const useUtil = () => {
     logo: false,
   })
   const [loadingColorImage, setLoadingColorImage] = useState({})
+  const [loadingFeatureImage, setLoadingFeatureImage] = useState({})
 
   const _submit = useCallback(async () => {
     let result
@@ -63,10 +64,12 @@ export const useUtil = () => {
       data?.colors[0].name === '' ||
       data?.colors[0].code === '' ||
       data?.description === '' ||
-      !data.featureImages?.length ||
       !data.banners?.length ||
       data?.types[0].name === '' ||
       data?.types[0].price === '' ||
+      data?.features[0].name === '' ||
+      data?.features[0].text === '' ||
+      data?.features[0].image === '' ||
       data?.category === '' ||
       data?.logo === '' ||
       loading,
@@ -103,15 +106,18 @@ export const useUtil = () => {
     })
   }, [])
 
-  const onChangeColor = useCallback(({ target: { value } }, propertyName, index) => {
-    setData((prev) => {
-      const newData = {
-        ...prev,
-      }
-      newData.colors[index][propertyName] = value
-      return newData
-    })
-  }, [])
+  const onChangeNestedText = useCallback(
+    ({ target: { value } }, propertyName, index, parentKey) => {
+      setData((prev) => {
+        const newData = {
+          ...prev,
+        }
+        newData[parentKey][index][propertyName] = value
+        return newData
+      })
+    },
+    [],
+  )
 
   const addColor = useCallback(() => {
     setData((prev) => {
@@ -121,6 +127,20 @@ export const useUtil = () => {
       newData.colors.push({
         name: '',
         code: '',
+      })
+      return newData
+    })
+  }, [])
+
+  const addFeatures = useCallback(() => {
+    setData((prev) => {
+      const newData = {
+        ...prev,
+      }
+      newData.features.push({
+        title: '',
+        text: '',
+        image: '',
       })
       return newData
     })
@@ -228,12 +248,12 @@ export const useUtil = () => {
     e.target.value = ''
   }, [])
 
-  const onRemoveColorImage = useCallback((idx) => {
+  const onRemoveNestedImage = useCallback((idx, key) => {
     setData((prev) => {
       const newData = {
         ...prev,
       }
-      newData.colors[idx].image = ''
+      newData[key][idx].image = ''
       return newData
     })
   }, [])
@@ -261,6 +281,36 @@ export const useUtil = () => {
     })
   }, [])
 
+  const onUploadFeatureImages = useCallback(async (e, idx) => {
+    const formData = new FormData()
+    if (e?.target?.files?.length) {
+      formData.append('image', e?.target?.files[0])
+    }
+    setLoadingFeatureImage((prev) => {
+      const loading = { ...prev, [idx]: true }
+      return loading
+    })
+    const result = await ImageService.upload(formData)
+
+    setData((prev) => {
+      const newData = {
+        ...prev,
+      }
+
+      if (newData.features[idx]) {
+        newData.features[idx].image = result.image.url
+      }
+
+      return newData
+    })
+    setLoadingFeatureImage((prev) => {
+      const loading = { ...prev, [idx]: false }
+      return loading
+    })
+
+    e.target.value = ''
+  }, [])
+
   return {
     state: {
       isButtonDisabled,
@@ -274,7 +324,7 @@ export const useUtil = () => {
       onChangeText,
       onCancel,
       removeFeatureText,
-      onChangeColor,
+      onChangeNestedText,
       handleKeyDown,
       setLoading,
       setData,
@@ -284,9 +334,11 @@ export const useUtil = () => {
       onUploadImage,
       removeItem,
       onUploadColorImages,
-      onRemoveColorImage,
+      onRemoveNestedImage,
       onChangeType,
       addType,
+      onUploadFeatureImages,
+      addFeatures,
     },
   }
 }

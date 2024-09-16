@@ -19,8 +19,6 @@ const changeState = (state = initialState, { type, ...rest }) => {
         catalogueData: {
           banners: [],
           images: [],
-          featureTexts: [],
-          featureImages: [],
           name: '',
           price: 0,
           description: '',
@@ -39,6 +37,13 @@ const changeState = (state = initialState, { type, ...rest }) => {
             {
               name: '',
               price: '',
+            },
+          ],
+          features: [
+            {
+              title: '',
+              text: '',
+              image: '',
             },
           ],
         },
