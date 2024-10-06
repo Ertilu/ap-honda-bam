@@ -3,7 +3,9 @@ import { lazyRetry } from './shared/utils/lazy-retry'
 
 const Dashboard = React.lazy(() => import('./views/dashboard/catalogues'))
 const Promo = React.lazy(() => import('./views/dashboard/promos'))
+const LiveChat = React.lazy(() => import('./views/dashboard/livechats'))
 const FormPromos = React.lazy(() => import('./views/dashboard/promos/forms'))
+const FormLiveChats = React.lazy(() => import('./views/dashboard/livechats/forms'))
 const Colors = React.lazy(() => import('./views/theme/colors/Colors'))
 const Typography = React.lazy(() => import('./views/theme/typography/Typography'))
 
@@ -63,6 +65,7 @@ const routes = [
   { path: '/', exact: true, name: 'Home' },
   { path: '/dashboard/catalogues', name: 'Dashboard Catalogues', element: Dashboard },
   { path: '/dashboard/promos', name: 'Dashboard Promos', element: Promo },
+  { path: '/dashboard/livechats', name: 'Dashboard Live Chats', element: LiveChat },
   { path: '/theme', name: 'Theme', element: Colors, exact: true },
   { path: '/theme/colors', name: 'Colors', element: Colors },
   { path: '/theme/typography', name: 'Typography', element: Typography },
@@ -88,6 +91,7 @@ const routes = [
   { path: '/charts', name: 'Charts', element: Charts },
   { path: '/dashboard/catalogues/forms', name: 'Forms', element: Forms, exact: true },
   { path: '/dashboard/promos/forms', name: 'Forms', element: FormPromos, exact: true },
+  { path: '/dashboard/livechats/forms', name: 'Forms', element: FormLiveChats, exact: true },
   { path: '/forms-example', name: 'Forms Example', element: FormControl, exact: true },
   { path: '/forms/form-control', name: 'Form Control', element: FormControl },
   { path: '/forms/select', name: 'Select', element: Select },
