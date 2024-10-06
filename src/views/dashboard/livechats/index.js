@@ -131,12 +131,12 @@ const Dashboard = (props) => {
           </div>
         </CCardHeader>
         <CCardBody>
-          <div className="w-100 border-bottom row mx-auto mt-3" style={{ height: '60px' }}>
+          <div className="w-100 border-bottom row mx-auto py-3 userchat" style={{ height: '80px' }}>
             <div className="col-1 d-flex justify-content-end align-items-center">
               <BsPersonCircle size={50} />
             </div>
             <div className="col w-50 h-100" style={{ cursor: 'pointer' }}>
-              <div className="h-25 row">
+              <div className="h-50  row">
                 <div className="col">
                   <p className="fw-semibold ">Mas Hengki</p>
                 </div>
@@ -146,9 +146,9 @@ const Dashboard = (props) => {
                   </p>
                 </div>
               </div>
-              <div className="w-100 h-75 d-flex align-items-end justify-content-end">
+              <div className="w-100">
                 <p
-                  className="w-100 h-50"
+                  className="w-100"
                   style={{
                     whiteSpace: 'nowrap',
                     overflow: 'hidden',
@@ -177,12 +177,12 @@ const Dashboard = (props) => {
               </button>
             </div>
           </div>
-          <div className="w-100 border-bottom row mx-auto mt-3" style={{ height: '60px' }}>
-            <div className="col-1 d-flex justify-content-end align-items-center">
+          <div className="w-100 border-bottom row mx-auto py-3 userchat" style={{ height: '80px' }}>
+            <div className="col-1 d-flex justify-content-end align-items-center ">
               <BsPersonCircle size={50} />
             </div>
             <div className="col w-50 h-100" style={{ cursor: 'pointer' }}>
-              <div className="h-25 row">
+              <div className="h-50 row">
                 <div className="col">
                   <p className="fw-semibold ">Mba Puput</p>
                 </div>
@@ -192,9 +192,9 @@ const Dashboard = (props) => {
                   </p>
                 </div>
               </div>
-              <div className="w-100 h-75 d-flex align-items-end justify-content-end">
+              <div className="w-100">
                 <p
-                  className="w-100 h-50"
+                  className="w-100"
                   style={{
                     whiteSpace: 'nowrap',
                     overflow: 'hidden',

@@ -6,8 +6,10 @@
   left: -20px !important;
 }
 
-.datepicker {
-  width: 100px;
-  display: flex;
-  justify-content: center;
+.userchat {
+  background-color: white;
+}
+
+.userchat:hover {
+  filter: brightness(95%);
 }
