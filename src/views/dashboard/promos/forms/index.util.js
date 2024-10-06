@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import PromoService from 'src/services/promo.service'
 import { RESET_PROMO_FORM } from 'src/actionType'
 import { ImageService } from 'src/services'
+import * as moment from 'moment'
 
 export const useUtil = () => {
   const navigate = useNavigate()
@@ -21,7 +22,6 @@ export const useUtil = () => {
     logo: false,
   })
   const [loadingColorImage, setLoadingColorImage] = useState({})
-  console.log('promoData', promoData)
 
   const _submit = useCallback(async () => {
     let result
@@ -29,6 +29,8 @@ export const useUtil = () => {
     if (formMode === 'add') {
       result = await PromoService.create({
         ...data,
+        startDate: moment(data?.startDate).toDate(),
+        endDate: moment(data?.endDate).toDate(),
       })
     } else if (formMode === 'edit') {
       const payloadEdit = {
