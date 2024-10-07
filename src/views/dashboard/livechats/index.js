@@ -131,7 +131,11 @@ const Dashboard = (props) => {
           </div>
         </CCardHeader>
         <CCardBody>
-          <div className="w-100 border-bottom row mx-auto py-3 userchat" style={{ height: '80px' }}>
+          <div
+            className="w-100 border-bottom row mx-auto py-3 userchat"
+            style={{ height: '80px' }}
+            onClick={() => navigate('/dashboard/livechats/roomchat')}
+          >
             <div className="col-1 d-flex justify-content-end align-items-center">
               <BsPersonCircle size={50} />
             </div>
@@ -177,6 +181,7 @@ const Dashboard = (props) => {
               </button>
             </div>
           </div>
+
           <div className="w-100 border-bottom row mx-auto py-3 userchat" style={{ height: '80px' }}>
             <div className="col-1 d-flex justify-content-end align-items-center ">
               <BsPersonCircle size={50} />

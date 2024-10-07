@@ -1,0 +1,42 @@
+input#input-harga[type='number']::-webkit-inner-spin-button,
+input#input-harga[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+}
+
+input#input-harga[type='number'] {
+  -moz-appearance: textfield;
+}
+.text-customer-name {
+  font-size: 1.2em;
+  font-weight: 500;
+}
+
+.box-chat-message {
+  background-color: white;
+}
+
+.box-chat-message-admin {
+  background-color: #3c4b64;
+}
+
+.text-chat-message {
+  font-size: 0.9em;
+  font-weight: normal;
+}
+
+.input-text:focus {
+  outline: none;
+}
+
+.roomchat-body {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.kirim-pesan {
+  cursor: pointer;
+}
+
+.kirim-pesan:hover {
+  color: '#303C54';
+}
