@@ -104,6 +104,8 @@ const Dashboard = (props) => {
     setModalDetail(false)
   }
 
+  console.log('dasawda', data)
+
   return (
     <>
       <CCard>
@@ -144,33 +146,39 @@ const Dashboard = (props) => {
           <CTable hover striped responsive>
             <CTableHead>
               <CTableRow>
-                <CTableHeaderCell scope="col" width={500}>
+                <CTableHeaderCell scope="col" style={{ minWidth: '150px', maxWidth: '150px' }}>
                   Name
                 </CTableHeaderCell>
-                <CTableHeaderCell scope="col" width={250}>
+                <CTableHeaderCell scope="col" style={{ minWidth: '150px', maxWidth: '150px' }}>
                   Price
                 </CTableHeaderCell>
-                <CTableHeaderCell scope="col">Description</CTableHeaderCell>
-                <CTableHeaderCell scope="col" width={150}>
+                <CTableHeaderCell scope="col" style={{ minWidth: '250px', maxWidth: '250px' }}>
+                  Description
+                </CTableHeaderCell>
+                <CTableHeaderCell scope="col" style={{ minWidth: '100px', maxWidth: '100px' }}>
                   Category
                 </CTableHeaderCell>
-                <CTableHeaderCell scope="col" width={550}>
+                <CTableHeaderCell scope="col" style={{ minWidth: '150px', maxWidth: '150px' }}>
                   Colors
                 </CTableHeaderCell>
-                <CTableHeaderCell scope="col">Logo</CTableHeaderCell>
-                <CTableHeaderCell scope="col" width={'auto'}>
+                <CTableHeaderCell scope="col" style={{ minWidth: '150px', maxWidth: '150px' }}>
+                  Logo
+                </CTableHeaderCell>
+                <CTableHeaderCell scope="col" style={{ minWidth: '250px', maxWidth: '250px' }}>
                   Banners
                 </CTableHeaderCell>
-                <CTableHeaderCell scope="col" width={'auto'}>
+                <CTableHeaderCell scope="col" style={{ minWidth: '150px', maxWidth: '150px' }}>
                   Images
                 </CTableHeaderCell>
-                <CTableHeaderCell scope="col" width={'auto'}>
+                <CTableHeaderCell scope="col" style={{ minWidth: '150px', maxWidth: '150px' }}>
                   Feature Texts
                 </CTableHeaderCell>
-                <CTableHeaderCell scope="col" width={'auto'}>
+                <CTableHeaderCell scope="col" style={{ minWidth: '150px', maxWidth: '150px' }}>
                   Feature Images
                 </CTableHeaderCell>
-                <CTableHeaderCell scope="col">Action</CTableHeaderCell>
+                <CTableHeaderCell scope="col" style={{ minWidth: '150px', maxWidth: '150px' }}>
+                  Action
+                </CTableHeaderCell>
               </CTableRow>
             </CTableHead>
             <CTableBody>
@@ -178,22 +186,21 @@ const Dashboard = (props) => {
                 return (
                   <CTableRow key={idx.toString()}>
                     <CTableDataCell
-                      scope="row"
-                      align="middle"
+                      align="top"
                       onClick={() => openModalDetail(d)}
                       style={{ cursor: 'pointer' }}
                     >
                       {d?.name || '-'}
                     </CTableDataCell>
                     <CTableDataCell
-                      align="middle"
+                      align="top"
                       onClick={() => openModalDetail(d)}
                       style={{ cursor: 'pointer' }}
                     >
                       {formatRupiah(d?.price || 0)}
                     </CTableDataCell>
                     <CTableDataCell
-                      align="middle"
+                      align="top"
                       onClick={() => openModalDetail(d)}
                       style={{ cursor: 'pointer' }}
                     >
@@ -211,88 +218,128 @@ const Dashboard = (props) => {
                       </div>
                     </CTableDataCell>
                     <CTableDataCell
-                      align="middle"
+                      align="top"
                       onClick={() => openModalDetail(d)}
                       style={{ cursor: 'pointer' }}
                     >
                       {d?.category || '-'}
                     </CTableDataCell>
-                    <CTableDataCell align="middle" onClick={() => openModalDetail(d)}>
-                      {d?.colors?.map((c) => c.name)?.join(', ') || '-'}
+                    <CTableDataCell align="top" onClick={() => openModalDetail(d)}>
+                      <ul>
+                        {d?.colors?.map((c, idx) => {
+                          return <li key={idx}>{c.name}</li>
+                        })}
+                      </ul>
                     </CTableDataCell>
                     <CTableDataCell
-                      align="middle"
+                      align="top"
                       onClick={() => openModalDetail(d)}
                       style={{ cursor: 'pointer' }}
                     >
-                      <img alt="logo-catalogue" src={d?.logo} width={50} />
+                      <img
+                        alt="logo-catalogue"
+                        src={d?.logo}
+                        style={{ width: '140px', height: 'auto' }}
+                      />
                     </CTableDataCell>
                     <CTableDataCell
-                      align="middle"
+                      align="top"
                       onClick={() => openModalDetail(d)}
                       style={{ cursor: 'pointer' }}
                     >
                       <div
                         style={{
                           display: 'grid',
-                          gridTemplateColumns: 'auto auto auto',
-                          padding: '20px',
+                          gridTemplateColumns: 'auto',
+                          width: '100%',
+                          height: 'auto',
                         }}
                       >
                         {d?.banners?.map((b, idx) => {
                           return (
-                            <div key={idx} style={{ margin: '20px' }}>
-                              <img alt="banners" src={b} width={100} />
+                            <div
+                              key={idx}
+                              style={{ width: '100%', height: 'auto', marginBottom: '1em' }}
+                            >
+                              <img
+                                alt="banners"
+                                src={b}
+                                style={{ width: '100%', height: 'auto' }}
+                              />
                             </div>
                           )
                         })}
                       </div>
                     </CTableDataCell>
-                    <CTableDataCell align="middle">
+                    <CTableDataCell align="top">
                       <div
                         style={{
                           display: 'grid',
-                          gridTemplateColumns: 'auto auto auto',
-                          padding: '20px',
+                          gridTemplateColumns: 'auto ',
+                          width: '100%',
+                          height: 'auto',
                         }}
                       >
                         {d?.images?.map((b, idx) => {
                           return (
-                            <div key={idx} style={{ margin: '20px' }}>
-                              <img alt="logo-catalogue" src={b} width={100} />
+                            <div
+                              key={idx}
+                              style={{ width: '100%', height: 'auto', marginBottom: '1em' }}
+                            >
+                              <img
+                                alt="logo-catalogue"
+                                src={b}
+                                style={{ width: '100%', height: 'auto' }}
+                              />
                             </div>
                           )
                         })}
                       </div>
                     </CTableDataCell>
                     <CTableDataCell
-                      align="middle"
+                      align="top"
                       onClick={() => openModalDetail(d)}
                       style={{ cursor: 'pointer' }}
                     >
                       <div style={{ width: '500px' }}>
-                        {d?.featureTexts?.map((c) => c)?.join(', ') || 0}
+                        <ul>
+                          {d?.features?.map((c, idx) => {
+                            return (
+                              <li key={idx}>
+                                {c.title} : {c.text}
+                              </li>
+                            )
+                          })}
+                        </ul>
                       </div>
                     </CTableDataCell>
-                    <CTableDataCell align="middle">
+                    <CTableDataCell align="top">
                       <div
                         style={{
                           display: 'grid',
-                          gridTemplateColumns: 'auto auto auto',
-                          padding: '20px',
+                          gridTemplateColumns: 'auto',
+                          width: '100%',
+                          height: 'auto',
                         }}
                       >
-                        {d?.featureImages?.map((b, idx) => {
+                        {d?.features?.map((b, idx) => {
                           return (
-                            <div key={idx} style={{ margin: '20px' }}>
-                              <img alt="logo-catalogue" src={b} width={100} />
+                            <div
+                              key={idx}
+                              style={{ width: '100%', height: 'auto', marginBottom: '1em' }}
+                            >
+                              <img
+                                alt="logo-catalogue"
+                                src={b.image}
+                                style={{ width: '100%', height: 'auto' }}
+                              />
                             </div>
                           )
                         })}
                       </div>
                     </CTableDataCell>
-                    <CTableDataCell align="middle">
-                      <CDropdown>
+                    <CTableDataCell align="top">
+                      {/* <CDropdown>
                         <CDropdownToggle color="transparent"></CDropdownToggle>
                         <CDropdownMenu className="dropdown-container">
                           <CDropdownItem href="#" onClick={() => onEdit(d?.id)}>
@@ -308,7 +355,20 @@ const Dashboard = (props) => {
                             Hapus
                           </CDropdownItem>
                         </CDropdownMenu>
-                      </CDropdown>
+                      </CDropdown> */}
+                      <button
+                        className="button-action rounded-1 bg-warning text-white"
+                        style={{ width: '60px', height: '30px' }}
+                      >
+                        Edit
+                      </button>
+
+                      <button
+                        className="button-action rounded-1 mx-1 bg-danger text-white"
+                        style={{ width: '60px', height: '30px' }}
+                      >
+                        Hapus
+                      </button>
                     </CTableDataCell>
                   </CTableRow>
                 )
