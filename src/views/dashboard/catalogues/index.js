@@ -359,6 +359,7 @@ const Dashboard = (props) => {
                       <button
                         className="button-action rounded-1 bg-warning text-white"
                         style={{ width: '60px', height: '30px' }}
+                        onClick={() => onEdit(d?.id)}
                       >
                         Edit
                       </button>
@@ -366,6 +367,10 @@ const Dashboard = (props) => {
                       <button
                         className="button-action rounded-1 mx-1 bg-danger text-white"
                         style={{ width: '60px', height: '30px' }}
+                        onClick={() => {
+                          setIdToDelete(d?.id)
+                          setModalConfirmDelete(true)
+                        }}
                       >
                         Hapus
                       </button>
