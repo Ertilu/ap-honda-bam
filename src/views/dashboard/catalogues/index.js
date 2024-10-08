@@ -104,7 +104,7 @@ const Dashboard = (props) => {
     setModalDetail(false)
   }
 
-  console.log('dasawda', data)
+  // console.log('dasawda', data)
 
   return (
     <>
@@ -146,6 +146,9 @@ const Dashboard = (props) => {
           <CTable hover striped responsive>
             <CTableHead>
               <CTableRow>
+                <CTableHeaderCell scope="col" style={{ minWidth: '50px', maxWidth: '50px' }}>
+                  No
+                </CTableHeaderCell>
                 <CTableHeaderCell scope="col" style={{ minWidth: '150px', maxWidth: '150px' }}>
                   Name
                 </CTableHeaderCell>
@@ -182,9 +185,17 @@ const Dashboard = (props) => {
               </CTableRow>
             </CTableHead>
             <CTableBody>
-              {data?.map((d, idx) => {
+              {data?.map((d, idx, index) => {
+                // const nomor = index + 1
                 return (
                   <CTableRow key={idx.toString()}>
+                    <CTableDataCell
+                      align="top"
+                      onClick={() => openModalDetail(d)}
+                      style={{ cursor: 'pointer' }}
+                    >
+                      {idx + 1 || '-'}
+                    </CTableDataCell>
                     <CTableDataCell
                       align="top"
                       onClick={() => openModalDetail(d)}

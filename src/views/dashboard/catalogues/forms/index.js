@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from 'react'
+import React, { useMemo, useRef, useState } from 'react'
 import {
   CForm,
   CCardBody,
@@ -49,6 +49,24 @@ const PageForms = () => {
   const colorImageUploadRef = useRef()
 
   const renderAsterisk = useMemo(() => <span style={{ color: 'red' }}>*</span>, [])
+  const [isTambahTipe, setIsTambahTipe] = useState(false)
+  const [isTambahColor, setIsTambahColor] = useState(false)
+  const [isTambahFitur, setIsTambahFitur] = useState(false)
+
+  const tambahDataTipe = () => {
+    addType()
+    setIsTambahTipe(false)
+  }
+
+  const tambahDataColor = () => {
+    addColor()
+    setIsTambahColor(false)
+  }
+
+  const tambahDataFitur = () => {
+    addFeatures()
+    setIsTambahFitur(false)
+  }
 
   return (
     <div
@@ -137,49 +155,72 @@ const PageForms = () => {
               </CFormLabel>
               {data?.types?.map((item, idx) => {
                 return (
-                  <CInputGroup
-                    key={idx}
-                    className="mb-2 row row-cols-1 row-cols-md-3 mx-auto py-3 border rounded gap-2 "
-                  >
-                    <div className="col-lg-10 d-flex flex-column w-sm-100 gap-2">
-                      <CFormInput
-                        type="text"
-                        id="input-Type-name"
-                        placeholder="Nama Tipe"
-                        onChange={(e) => onChangeType(e, 'name', idx)}
-                        value={item.name}
-                      />
+                  <CInputGroup key={idx}>
+                    {!isTambahTipe && idx === data?.types.length - 1 ? (
+                      <CButton
+                        color="primary"
+                        onClick={() => setIsTambahTipe(true)}
+                        style={{ height: '40px', width: '200px' }}
+                      >
+                        + Tambah Tipe
+                      </CButton>
+                    ) : (
+                      <CInputGroup className="mb-2 row row-cols-1 row-cols-md-3 mx-auto py-3 border rounded gap-2">
+                        <div className="col-lg-10 d-flex flex-column w-sm-100 gap-2">
+                          <CFormInput
+                            type="text"
+                            id="input-Type-name"
+                            placeholder="Nama Tipe"
+                            onChange={(e) => onChangeType(e, 'name', idx)}
+                            value={item.name}
+                          />
 
-                      <CInputGroup>
-                        <CInputGroupText>Rp</CInputGroupText>
-                        <CFormInput
-                          type="text"
-                          id="input-Type-Price"
-                          placeholder="Harga"
-                          onChange={(e) => onChangeType(e, 'price', idx)}
-                          value={item.price}
-                        />
+                          <CInputGroup>
+                            <CInputGroupText>Rp</CInputGroupText>
+                            <CFormInput
+                              type="text"
+                              id="input-Type-Price"
+                              placeholder="Harga"
+                              onChange={(e) => onChangeType(e, 'price', idx)}
+                              value={item.price}
+                            />
+                          </CInputGroup>
+                        </div>
+                        <div className="d-grid col-1" style={{ width: '100px' }}>
+                          {idx === data?.types.length - 1 ? (
+                            <div>
+                              <CButton
+                                color="primary"
+                                onClick={tambahDataTipe}
+                                style={{ height: '40px', width: '100px' }}
+                              >
+                                Simpan
+                              </CButton>
+                              <CButton
+                                color="danger"
+                                onClick={() => setIsTambahTipe(false)}
+                                style={{
+                                  height: '40px',
+                                  width: '100px',
+                                  color: 'white',
+                                  marginTop: '4px',
+                                }}
+                              >
+                                Batal
+                              </CButton>
+                            </div>
+                          ) : (
+                            <CButton
+                              color="danger"
+                              style={{ height: '40px', width: '100px', color: 'white' }}
+                              onClick={() => removeItems(idx, 'types')}
+                            >
+                              Hapus
+                            </CButton>
+                          )}
+                        </div>
                       </CInputGroup>
-                    </div>
-                    <div className="d-grid col-1" style={{ width: '100px' }}>
-                      {idx === data?.types.length - 1 ? (
-                        <CButton
-                          color="primary"
-                          onClick={addType}
-                          style={{ height: '40px', width: '100px' }}
-                        >
-                          Add
-                        </CButton>
-                      ) : (
-                        <CButton
-                          color="danger"
-                          style={{ height: '40px', width: '100px' }}
-                          onClick={() => removeItems(idx, 'types')}
-                        >
-                          hapus
-                        </CButton>
-                      )}
-                    </div>
+                    )}
                   </CInputGroup>
                 )
               })}
@@ -312,268 +353,258 @@ const PageForms = () => {
               </CFormLabel>
               {data?.colors?.map((item, idx) => {
                 return (
-                  <CInputGroup
-                    key={idx}
-                    className="mb-2 flex flex-column mx-auto p-3 border rounded gap-2 h-100"
-                  >
-                    <CFormInput
-                      type="text"
-                      id="input-color-name"
-                      placeholder="Color Name"
-                      style={{ width: '100%' }}
-                      onChange={(e) => onChangeNestedText(e, 'name', idx, 'colors')}
-                      value={item.name}
-                    />
-                    <div className="row row-cols-2 row-cols-md-3 gap-2" style={{ height: 'auto' }}>
-                      {item?.image && item?.image?.length ? (
-                        <div className="col-lg-2">
-                          <CImage alt={`logo}`} fluid thumbnail src={item?.image} height={'auto'} />
-                          <div
-                            style={{
-                              position: 'absolute',
-                              top: 10,
-                              right: 10,
-                            }}
-                          >
-                            <span
-                              className="remove-image"
-                              onClick={() => onRemoveNestedImage(idx, 'colors')}
-                            >
-                              &times;
-                            </span>
+                  <CInputGroup key={idx}>
+                    {!isTambahColor && !item?.image && !item?.image?.length ? (
+                      <CButton
+                        color="primary"
+                        onClick={() => setIsTambahColor(true)}
+                        style={{ height: '40px', width: '200px', marginBottom: '8px' }}
+                      >
+                        + Tambah Color
+                      </CButton>
+                    ) : (
+                      <CInputGroup
+                        className="mb-2 flex flex-column mx-auto p-3 border rounded gap-2"
+                        style={{ height: '50%' }}
+                      >
+                        <CFormInput
+                          type="text"
+                          id="input-color-name"
+                          placeholder="Color Name"
+                          style={{ width: '100%' }}
+                          onChange={(e) => onChangeNestedText(e, 'name', idx, 'colors')}
+                          value={item.name}
+                        />
+                        <div
+                          className="row row-cols-2 row-cols-md-3 gap-2"
+                          style={{ height: '180px' }}
+                        >
+                          {item?.image && item?.image?.length ? (
+                            <div className="col-lg-2">
+                              <CImage
+                                alt={`logo}`}
+                                fluid
+                                thumbnail
+                                src={item?.image}
+                                height={'auto'}
+                              />
+                              <div
+                                style={{
+                                  position: 'absolute',
+                                  top: 10,
+                                  right: 10,
+                                }}
+                              >
+                                <span
+                                  className="remove-image"
+                                  onClick={() => onRemoveNestedImage(idx, 'colors')}
+                                >
+                                  &times;
+                                </span>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="col-lg-2 ">
+                              <div>
+                                <CButton
+                                  onClick={() => colorImageUploadRef.current.click()}
+                                  className="m-2 bg-body-secondary rounded d-flex align-items-center justify-content-center"
+                                  style={{ width: '10em', height: '10em', cursor: 'pointer' }}
+                                  disabled={loadingColorImage[idx]}
+                                >
+                                  {loadingColorImage[idx] ? 'Uploading...' : 'Upload Image'}
+                                </CButton>
+                              </div>
+                              <input
+                                type="file"
+                                id="logoFile"
+                                accept="image/*"
+                                onChange={(e) => onUploadColorImages(e, idx)}
+                                ref={colorImageUploadRef}
+                                style={{ display: 'none' }}
+                              ></input>
+                            </div>
+                          )}
+                          <div className="d-flex flex-column gap-2 col-lg-8 col-12">
+                            <CFormInput
+                              type="text"
+                              id="input-hex"
+                              placeholder="Color Hex Cth: #ffffff"
+                              onChange={(e) => onChangeNestedText(e, 'code', idx, 'colors')}
+                              value={item.code}
+                            />
+                            <CFormInput
+                              type="text"
+                              id="input-hex"
+                              placeholder="Color Hex Cth: #ffffff"
+                              onChange={(e) => onChangeNestedText(e, 'code2', idx, 'colors')}
+                              value={item.code2}
+                            />
+                            <CFormInput
+                              type="text"
+                              id="input-hex"
+                              placeholder="Color Hex Cth: #ffffff"
+                              onChange={(e) => onChangeNestedText(e, 'code3', idx, 'colors')}
+                              value={item.code3}
+                            />
                           </div>
-                        </div>
-                      ) : (
-                        <div className="col-lg-2">
-                          <div>
-                            <CButton
-                              onClick={() => colorImageUploadRef.current.click()}
-                              className="m-2 bg-body-secondary rounded d-flex align-items-center justify-content-center"
-                              style={{ width: '10em', height: '10em', cursor: 'pointer' }}
-                              disabled={loadingColorImage[idx]}
-                            >
-                              {loadingColorImage[idx] ? 'Uploading...' : 'Upload Image'}
-                            </CButton>
-                          </div>
-                          <input
-                            type="file"
-                            id="logoFile"
-                            accept="image/*"
-                            onChange={(e) => onUploadColorImages(e, idx)}
-                            ref={colorImageUploadRef}
-                            style={{ display: 'none' }}
-                          ></input>
-                        </div>
-                      )}
-                      <div className="d-flex flex-column gap-2 col-lg-8 col-12">
-                        <CFormInput
-                          type="text"
-                          id="input-hex"
-                          placeholder="Color Hex Cth: #ffffff"
-                          onChange={(e) => onChangeNestedText(e, 'code', idx, 'colors')}
-                          value={item.code}
-                        />
-                        <CFormInput
-                          type="text"
-                          id="input-hex"
-                          placeholder="Color Hex Cth: #ffffff"
-                          onChange={(e) => onChangeNestedText(e, 'code2', idx, 'colors')}
-                          value={item.code2}
-                        />
-                        <CFormInput
-                          type="text"
-                          id="input-hex"
-                          placeholder="Color Hex Cth: #ffffff"
-                          onChange={(e) => onChangeNestedText(e, 'code3', idx, 'colors')}
-                          value={item.code3}
-                        />
-                      </div>
 
-                      <div className="d-grid col-auto" style={{ width: '100px', height: 'auto' }}>
-                        {idx === data?.colors.length - 1 ? (
-                          <CButton
-                            color="primary"
-                            style={{ width: '100px', height: '40px' }}
-                            onClick={addColor}
+                          <div
+                            className="d-grid col-auto"
+                            style={{ width: '100px', height: 'auto' }}
                           >
-                            Simpan
-                          </CButton>
-                        ) : (
-                          <CButton
-                            color="danger"
-                            style={{ width: '100px', height: '40px' }}
-                            onClick={() => removeItems(idx, 'colors')}
-                          >
-                            Hapus
-                          </CButton>
-                        )}
-                      </div>
-                    </div>
+                            {idx === data?.colors.length - 1 ? (
+                              <div>
+                                <CButton
+                                  color="primary"
+                                  style={{ width: '100px', height: '40px' }}
+                                  onClick={tambahDataColor}
+                                >
+                                  Simpan
+                                </CButton>
+                                <CButton
+                                  color="danger"
+                                  onClick={() => setIsTambahColor(false)}
+                                  style={{
+                                    height: '40px',
+                                    width: '100px',
+                                    color: 'white',
+                                    marginTop: '4px',
+                                  }}
+                                >
+                                  Batal
+                                </CButton>
+                              </div>
+                            ) : (
+                              <CButton
+                                color="danger"
+                                style={{ width: '100px', height: '40px', color: 'white' }}
+                                onClick={() => removeItems(idx, 'colors')}
+                              >
+                                Hapus
+                              </CButton>
+                            )}
+                          </div>
+                        </div>
+                      </CInputGroup>
+                    )}
                   </CInputGroup>
                 )
               })}
-
-              {/* <div>
-                <CFormLabel htmlFor="input-harga-label" style={{ marginTop: spacing[16] }}>
-                  Feature Text
-                </CFormLabel>
-                <CInputGroup>
-                  <div className="tags-input-container">
-                    {data?.featureTexts?.map((f, index) => (
-                      <div className="tag-item" key={index}>
-                        <span className="text">{f}</span>
-                        <span className="close" onClick={() => removeFeatureText(index)}>
-                          &times;
-                        </span>
-                      </div>
-                    ))}
-                    <input
-                      type="text"
-                      className="tags-input form-control"
-                      placeholder="Input Feature Texts"
-                      onKeyDown={handleKeyDown}
-                    />
-                  </div>
-                </CInputGroup>
-              </div>
-
-              <CFormLabel htmlFor="input-harga-label" style={{ marginTop: spacing[16] }}>
-                Feature Images {renderAsterisk}
-              </CFormLabel>
-              <div className="d-grid">
-                <CInputGroup>
-                  {data?.featureImages?.map((img, index) => {
-                    return (
-                      <div key={index} className="col-lg-4 col-sm-12 position-relative">
-                        <CImage
-                          alt={`featureImage-${index}`}
-                          fluid
-                          thumbnail
-                          src={img}
-                          height={'auto'}
-                        />
-                        <div
-                          style={{
-                            position: 'absolute',
-                            top: 10,
-                            right: 10,
-                          }}
-                        >
-                          <span
-                            className="remove-image"
-                            onClick={() => removeItems(index, 'featureImages')}
-                          >
-                            &times;
-                          </span>
-                        </div>
-                      </div>
-                    )
-                  })}
-                  <div>
-                    <CButton
-                      color="primary"
-                      onClick={() => featureImageUploadRef.current.click()}
-                      className="m-2"
-                      disabled={loadingUpload.featureImages}
-                    >
-                      {loadingUpload.featureImages ? 'Uploading...' : 'Upload Feature Image'}
-                    </CButton>
-                  </div>
-                  <input
-                    type="file"
-                    id="featureImagesFile"
-                    accept="image/*"
-                    onChange={(e) => onUploadImages(e, 'featureImages')}
-                    ref={featureImageUploadRef}
-                    style={{ display: 'none' }}
-                  ></input>
-                </CInputGroup>
-              </div> */}
 
               <CFormLabel htmlFor="input-harga-label" style={{ marginTop: spacing[16] }}>
                 Fitur {renderAsterisk}
               </CFormLabel>
               {data?.features?.map((item, idx) => {
                 return (
-                  <CInputGroup
-                    key={idx}
-                    className="mb-2 row row-cols-3 row-cols-md-2 gap-2 border rounded mx-auto p-3"
-                  >
-                    {item?.image && item?.image?.length ? (
-                      <div className="col-lg-2">
-                        <CImage alt={`logo}`} fluid thumbnail src={item?.image} height={'auto'} />
-                        <div
-                          style={{
-                            position: 'absolute',
-                            top: 10,
-                            right: 10,
-                          }}
-                        >
-                          <span
-                            className="remove-image"
-                            onClick={() => onRemoveNestedImage(idx, 'features')}
-                          >
-                            &times;
-                          </span>
-                        </div>
-                      </div>
+                  <CInputGroup key={idx}>
+                    {!isTambahFitur && !item?.image && !item?.image?.length ? (
+                      <CButton
+                        color="primary"
+                        onClick={() => setIsTambahFitur(true)}
+                        style={{ height: '40px', width: '200px', marginBottom: '8px' }}
+                      >
+                        + Tambah Fitur
+                      </CButton>
                     ) : (
-                      <div className="col-lg-2">
-                        <div>
-                          <CButton
-                            onClick={() => featureImageUploadRef.current.click()}
-                            className="m-2 bg-body-secondary rounded d-flex align-items-center justify-content-center"
-                            style={{ width: '10em', height: '10em', cursor: 'pointer' }}
-                            disabled={loadingColorImage[idx]}
-                          >
-                            {loadingColorImage[idx] ? 'Uploading...' : 'Upload Image'}
-                          </CButton>
+                      <CInputGroup className="mb-2 row row-cols-3 row-cols-md-2 gap-2 border rounded mx-auto p-3">
+                        {item?.image && item?.image?.length ? (
+                          <div className="col-lg-2">
+                            <CImage
+                              alt={`logo}`}
+                              fluid
+                              thumbnail
+                              src={item?.image}
+                              height={'auto'}
+                            />
+                            <div
+                              style={{
+                                position: 'absolute',
+                                top: 10,
+                                right: 10,
+                              }}
+                            >
+                              <span
+                                className="remove-image"
+                                onClick={() => onRemoveNestedImage(idx, 'features')}
+                              >
+                                &times;
+                              </span>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="col-lg-2">
+                            <div>
+                              <CButton
+                                onClick={() => featureImageUploadRef.current.click()}
+                                className="m-2 bg-body-secondary rounded d-flex align-items-center justify-content-center"
+                                style={{ width: '10em', height: '10em', cursor: 'pointer' }}
+                                disabled={loadingColorImage[idx]}
+                              >
+                                {loadingColorImage[idx] ? 'Uploading...' : 'Upload Image'}
+                              </CButton>
+                            </div>
+                            <input
+                              type="file"
+                              id="logoFile"
+                              accept="image/*"
+                              onChange={(e) => onUploadFeatureImages(e, idx)}
+                              ref={featureImageUploadRef}
+                              style={{ display: 'none' }}
+                            ></input>
+                          </div>
+                        )}
+                        <div className="d-flex flex-column gap-2 col-lg-8 col-12">
+                          <CFormInput
+                            type="text"
+                            id="input-feature-title"
+                            placeholder="Masukan Nama Fitur"
+                            onChange={(e) => onChangeNestedText(e, 'title', idx, 'features')}
+                            value={item.title}
+                          />
+                          <CFormInput
+                            type="text"
+                            id="input-Text"
+                            placeholder="Masukan Isi Fitur"
+                            onChange={(e) => onChangeNestedText(e, 'text', idx, 'features')}
+                            value={item.text}
+                          />
                         </div>
-                        <input
-                          type="file"
-                          id="logoFile"
-                          accept="image/*"
-                          onChange={(e) => onUploadFeatureImages(e, idx)}
-                          ref={featureImageUploadRef}
-                          style={{ display: 'none' }}
-                        ></input>
-                      </div>
+                        <div className="d-grid col-2" style={{ width: '100px' }}>
+                          {idx === data?.colors.length - 1 ? (
+                            <div>
+                              <CButton
+                                color="primary"
+                                onClick={tambahDataFitur}
+                                style={{ width: '100px', height: '40px' }}
+                              >
+                                Simpan
+                              </CButton>
+                              <CButton
+                                color="danger"
+                                onClick={() => setIsTambahFitur(false)}
+                                style={{
+                                  height: '40px',
+                                  width: '100px',
+                                  color: 'white',
+                                  marginTop: '4px',
+                                }}
+                              >
+                                Batal
+                              </CButton>
+                            </div>
+                          ) : (
+                            <CButton
+                              color="danger"
+                              onClick={() => removeItems(idx, 'features')}
+                              style={{ width: '100px', height: '40px' }}
+                            >
+                              Hapus
+                            </CButton>
+                          )}
+                        </div>
+                      </CInputGroup>
                     )}
-                    <div className="d-flex flex-column gap-2 col-lg-8 col-12">
-                      <CFormInput
-                        type="text"
-                        id="input-feature-title"
-                        placeholder="Masukan Nama Fitur"
-                        onChange={(e) => onChangeNestedText(e, 'title', idx, 'features')}
-                        value={item.title}
-                      />
-                      <CFormInput
-                        type="text"
-                        id="input-Text"
-                        placeholder="Masukan Isi Fitur"
-                        onChange={(e) => onChangeNestedText(e, 'text', idx, 'features')}
-                        value={item.text}
-                      />
-                    </div>
-                    <div className="d-grid col-2" style={{ width: '100px' }}>
-                      {idx === data?.colors.length - 1 ? (
-                        <CButton
-                          color="primary"
-                          onClick={addFeatures}
-                          style={{ width: '100px', height: '40px' }}
-                        >
-                          Add
-                        </CButton>
-                      ) : (
-                        <CButton
-                          color="danger"
-                          onClick={() => removeItems(idx, 'features')}
-                          style={{ width: '100px', height: '40px' }}
-                        >
-                          Hapus
-                        </CButton>
-                      )}
-                    </div>
                   </CInputGroup>
                 )
               })}
