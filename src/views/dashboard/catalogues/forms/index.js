@@ -571,7 +571,7 @@ const PageForms = () => {
                           />
                         </div>
                         <div className="d-grid col-2" style={{ width: '100px' }}>
-                          {idx === data?.colors.length - 1 ? (
+                          {idx === data?.features.length - 1 ? (
                             <div>
                               <CButton
                                 color="primary"
@@ -597,7 +597,7 @@ const PageForms = () => {
                             <CButton
                               color="danger"
                               onClick={() => removeItems(idx, 'features')}
-                              style={{ width: '100px', height: '40px' }}
+                              style={{ width: '100px', height: '40px', color: 'white' }}
                             >
                               Hapus
                             </CButton>
