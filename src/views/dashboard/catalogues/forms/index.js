@@ -151,6 +151,21 @@ const PageForms = () => {
               </CInputGroup>
 
               <CFormLabel htmlFor="input-harga-label" style={{ marginTop: spacing[16] }}>
+                Down Payment {renderAsterisk}
+              </CFormLabel>
+              <CInputGroup>
+                <CInputGroupText>Rp</CInputGroupText>
+                <CFormInput
+                  type="number"
+                  id="input-dp"
+                  placeholder="Input DP"
+                  min={1}
+                  onChange={(e) => onChangeText(e, 'downPayment')}
+                  value={data.downPayment}
+                />
+              </CInputGroup>
+
+              <CFormLabel htmlFor="input-harga-label" style={{ marginTop: spacing[16] }}>
                 Tipe {renderAsterisk}
               </CFormLabel>
               {data?.types?.map((item, idx) => {

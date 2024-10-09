@@ -21,6 +21,7 @@ const changeState = (state = initialState, { type, ...rest }) => {
           images: [],
           name: '',
           price: 0,
+          downPayment: 0,
           description: '',
           category: '',
           colors: [

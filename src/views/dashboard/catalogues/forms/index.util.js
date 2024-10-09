@@ -27,12 +27,18 @@ export const useUtil = () => {
     if (formMode === 'add') {
       result = await CatalogueService.create({
         ...data,
+        colors: data?.colors?.filter((c) => c?.name && c?.name !== ''),
+        features: data?.features?.filter((c) => c?.title && c?.title !== ''),
         price: parseInt(data.price, 10),
+        downPayment: parseInt(data.downPayment, 10),
       })
     } else if (formMode === 'edit') {
       const payloadEdit = {
         ...data,
+        colors: data?.colors?.filter((c) => c?.name && c?.name !== ''),
+        features: data?.features?.filter((c) => c?.title && c?.title !== ''),
         price: parseInt(data.price, 10),
+        downPayment: parseInt(data.downPayment, 10),
       }
       delete payloadEdit?.id
       delete payloadEdit?.remaining

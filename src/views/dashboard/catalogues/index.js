@@ -155,6 +155,9 @@ const Dashboard = (props) => {
                 <CTableHeaderCell scope="col" style={{ minWidth: '150px', maxWidth: '150px' }}>
                   Price
                 </CTableHeaderCell>
+                <CTableHeaderCell scope="col" style={{ minWidth: '150px', maxWidth: '150px' }}>
+                  Down Payment (DP)
+                </CTableHeaderCell>
                 <CTableHeaderCell scope="col" style={{ minWidth: '250px', maxWidth: '250px' }}>
                   Description
                 </CTableHeaderCell>
@@ -209,6 +212,13 @@ const Dashboard = (props) => {
                       style={{ cursor: 'pointer' }}
                     >
                       {formatRupiah(d?.price || 0)}
+                    </CTableDataCell>
+                    <CTableDataCell
+                      align="top"
+                      onClick={() => openModalDetail(d)}
+                      style={{ cursor: 'pointer' }}
+                    >
+                      {formatRupiah(d?.downPayment || 0)}
                     </CTableDataCell>
                     <CTableDataCell
                       align="top"
