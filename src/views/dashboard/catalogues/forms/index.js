@@ -158,7 +158,7 @@ const PageForms = () => {
                 <CFormInput
                   type="number"
                   id="input-dp"
-                  placeholder="Input DP"
+                  placeholder="Tulis depannya saja, Cth: 500.000 jadi 500"
                   min={1}
                   onChange={(e) => onChangeText(e, 'downPayment')}
                   value={data.downPayment}
