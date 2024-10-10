@@ -6,3 +6,5 @@ export const PARTYKIT_PROTOCOL =
     : 'https'
 
 export const PARTYKIT_URL = `${PARTYKIT_PROTOCOL}://${PARTYKIT_HOST}`
+
+export const SINGLETON_ROOM_ID = 'list'

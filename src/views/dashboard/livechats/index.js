@@ -1,5 +1,3 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable react/display-name */
 import React, { useCallback, useEffect, useState } from 'react'
 import {
   CTable,
@@ -18,98 +16,46 @@ import {
 } from '@coreui/react'
 import { useNavigate } from 'react-router-dom'
 import CIcon from '@coreui/icons-react'
+import './index.scss'
 import { cilSearch } from '@coreui/icons'
 import { useDispatch } from 'react-redux'
-import Loading from 'src/components/Loading'
-import ModalConfirmation from '../../../components/ModalConfirmation'
-import { formatRupiah } from 'src/shared/utils/formatter'
-import { useDebounce } from 'src/shared/utils/debounce'
-import PromoService from 'src/services/promo.service'
-import './index.scss'
-import 'react-datepicker/dist/react-datepicker.css'
-import { spacing } from 'src/shared/style.const'
-import * as moment from 'moment'
 import { BsPersonCircle } from 'react-icons/bs'
+import 'react-datepicker/dist/react-datepicker.css'
 import { RiCheckDoubleFill } from 'react-icons/ri'
+import { PARTYKIT_HOST, SINGLETON_ROOM_ID } from 'src/config'
+import usePartySocket from 'partysocket/react'
+import { removeDuplicates } from '../../../shared/utils'
 
 const Dashboard = (props) => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const [data, setData] = useState([])
-  const [search, setSearch] = useState('')
-  const debouncedValue = useDebounce(search, 600)
-  const [loading, setLoading] = useState(true)
-  const [modalConfirmDelete, setModalConfirmDelete] = useState(false)
-  const [idToDelete, setIdToDelete] = useState('')
-  const [modalDetail, setModalDetail] = useState(false)
-  const [filter, setFilter] = useState({
-    filterDate: new Date(),
+  const [rooms, setRooms] = useState([])
+
+  const socket = usePartySocket({
+    host: PARTYKIT_HOST,
+    party: 'chatrooms',
+    room: SINGLETON_ROOM_ID,
   })
 
   useEffect(() => {
-    getData()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedValue, filter])
-
-  const getData = useCallback(() => {
-    PromoService.getAllData({
-      search: debouncedValue,
-    })
-      .then((res) => {
-        setLoading(false)
-        setData(res?.results)
-      })
-      .catch(() => setLoading(false))
-  }, [debouncedValue, filter])
-
-  const onSearch = useCallback(({ target: { value } }) => {
-    setSearch(value)
-  }, [])
-
-  const onEdit = useCallback(
-    async (id) => {
-      setLoading(true)
-      const res = await PromoService.getDetail(id)
-      if (res?.id) {
-        setLoading(false)
-        dispatch({
-          type: 'edit_inventory',
-          inventoryData: {
-            id: res?.id,
-            name: res?.name,
-            price: res?.price,
-          },
+    if (socket) {
+      const onMessage = (evt) => {
+        const data = JSON.parse(evt.data)
+        setRooms((state) => {
+          return removeDuplicates([...state, ...data], 'id')
         })
-        navigate('/dashboard/forms')
       }
-    },
-    [dispatch, setLoading, navigate],
-  )
+      socket.addEventListener('message', onMessage)
 
-  const onDelete = useCallback(async () => {
-    setLoading(true)
-    setModalConfirmDelete(false)
-    await PromoService.delete(idToDelete)
-    getData()
-  }, [idToDelete, getData])
-
-  const openModalDetail = useCallback((currentData) => {
-    setModalDetail(true)
-  }, [])
-
-  const closeModalDetail = () => {
-    setModalDetail(false)
-  }
-
+      return () => {
+        // @ts-ignore
+        socket.removeEventListener('message', onMessage)
+      }
+    }
+  }, [socket])
   return (
     <>
       <CCard>
-        <Loading visible={loading} />
-        <ModalConfirmation
-          visible={modalConfirmDelete}
-          onClose={() => setModalConfirmDelete(false)}
-          onOk={onDelete}
-        />
         <CCardHeader>
           <div>
             <div className="d-flex justify-content-between align-items-center mt-2">
@@ -121,7 +67,7 @@ const Dashboard = (props) => {
                   aria-describedby="button-addon1"
                   size="sm"
                   icon={cilSearch}
-                  onChange={onSearch}
+                  onChange={() => null}
                 />
                 <CInputGroupText>
                   <CIcon icon={cilSearch} size="lg" />
@@ -131,103 +77,61 @@ const Dashboard = (props) => {
           </div>
         </CCardHeader>
         <CCardBody>
-          <div
-            className="w-100 border-bottom row mx-auto py-3 userchat"
-            style={{ height: '80px' }}
-            onClick={() => navigate('/dashboard/livechats/roomchat')}
-          >
-            <div className="col-1 d-flex justify-content-end align-items-center">
-              <BsPersonCircle size={50} />
-            </div>
-            <div className="col w-50 h-100" style={{ cursor: 'pointer' }}>
-              <div className="h-50  row">
-                <div className="col">
-                  <p className="fw-semibold ">Mas Hengki</p>
+          {rooms?.map((r, idx) => {
+            return (
+              <div
+                className="w-100 border-bottom row mx-auto py-3 userchat"
+                style={{ height: '80px' }}
+                onClick={() => navigate('/dashboard/livechats/roomchat')}
+                key={idx}
+              >
+                <div className="col-1 d-flex justify-content-end align-items-center">
+                  <BsPersonCircle size={50} />
                 </div>
-                <div className="col">
-                  <p className="text-end" style={{ fontSize: '15px' }}>
-                    04.20 PM
-                  </p>
+                <div className="col w-50 h-100" style={{ cursor: 'pointer' }}>
+                  <div className="h-50  row">
+                    <div className="col">
+                      <p className="fw-semibold ">{r?.roomName}</p>
+                    </div>
+                    <div className="col">
+                      <p className="text-end" style={{ fontSize: '15px' }}>
+                        04.20 PM
+                      </p>
+                    </div>
+                  </div>
+                  <div className="w-100">
+                    <p
+                      className="w-100"
+                      style={{
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                      }}
+                    >
+                      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas aliquam erat
+                      tempor elementum venenatis. Duis non lacus vestibulum, aliquet nisi eget,
+                      dictum tellus. Sed in.
+                    </p>
+                  </div>
                 </div>
-              </div>
-              <div className="w-100">
-                <p
-                  className="w-100"
-                  style={{
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                  }}
-                >
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas aliquam erat
-                  tempor elementum venenatis. Duis non lacus vestibulum, aliquet nisi eget, dictum
-                  tellus. Sed in.
-                </p>
-              </div>
-            </div>
-            <div className="col-1 d-flex justify-content-center align-items-center h-100 ">
-              {/* <div
+                <div className="col-1 d-flex justify-content-center align-items-center h-100 ">
+                  {/* <div
                 className="rounded-circle d-flex justify-content-center align-items-center bg-success"
                 style={{ height: '15px', width: '15px' }}
               ></div> */}
-              <RiCheckDoubleFill color="blue" size={25} />
-            </div>
-            <div className="col-1 d-flex justify-content-center align-items-center h-100 ">
-              <button
-                className="bg-danger text-white rounded-1"
-                style={{ height: '30px', border: 'none' }}
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-
-          <div className="w-100 border-bottom row mx-auto py-3 userchat" style={{ height: '80px' }}>
-            <div className="col-1 d-flex justify-content-end align-items-center ">
-              <BsPersonCircle size={50} />
-            </div>
-            <div className="col w-50 h-100" style={{ cursor: 'pointer' }}>
-              <div className="h-50 row">
-                <div className="col">
-                  <p className="fw-semibold ">Mba Puput</p>
+                  <RiCheckDoubleFill color="blue" size={25} />
                 </div>
-                <div className="col">
-                  <p className="text-end" style={{ fontSize: '15px' }}>
-                    04.20 PM
-                  </p>
+                <div className="col-1 d-flex justify-content-center align-items-center h-100 ">
+                  <button
+                    className="bg-danger text-white rounded-1"
+                    style={{ height: '30px', border: 'none' }}
+                  >
+                    Delete
+                  </button>
                 </div>
               </div>
-              <div className="w-100">
-                <p
-                  className="w-100"
-                  style={{
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                  }}
-                >
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas aliquam erat
-                  tempor elementum venenatis. Duis non lacus vestibulum, aliquet nisi eget, dictum
-                  tellus. Sed in.
-                </p>
-              </div>
-            </div>
-            <div className="col-1 d-flex justify-content-center align-items-center h-100 ">
-              <div
-                className="rounded-circle d-flex justify-content-center align-items-center bg-success"
-                style={{ height: '15px', width: '15px' }}
-              ></div>
-              {/* <RiCheckDoubleFill color="blue" size={25} /> */}
-            </div>
-            <div className="col-1 d-flex justify-content-center align-items-center h-100 ">
-              <button
-                className="bg-danger text-white rounded-1"
-                style={{ height: '30px', border: 'none' }}
-              >
-                Delete
-              </button>
-            </div>
-          </div>
+            )
+          })}
         </CCardBody>
       </CCard>
     </>
