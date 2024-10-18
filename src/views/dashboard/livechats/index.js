@@ -27,21 +27,6 @@ import usePartySocket from 'partysocket/react'
 import { removeDuplicates } from '../../../shared/utils'
 import * as moment from 'moment'
 
-const identify = async (socket, user) => {
-  const splitUrl = socket.url.split('?_pk=')
-  const pk = splitUrl[splitUrl.length - 1]
-  // the ./auth route will authenticate the connection to the partykit room
-  const url = `${PARTYKIT_URL}/parties/chatroom/${user?.id}/auth?_pk=${pk}`
-  const req = await fetch(url, { method: 'POST', body: JSON.stringify(user) })
-
-  if (!req.ok) {
-    const res = await req.text()
-    console.error('Failed to authenticate connection to PartyKit room', res)
-  }
-
-  return req
-}
-
 const LiveChat = (props) => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -98,13 +83,15 @@ const LiveChat = (props) => {
               <div
                 className="w-100 border-bottom row mx-auto py-3 userchat"
                 style={{ height: '80px' }}
-                onClick={() => navigate(`/dashboard/livechats/roomchat/${r?.id}`)}
+                onClick={() =>
+                  navigate(`/dashboard/livechats/roomchat/${r?.id}`, { state: { roomData: r } })
+                }
                 key={idx}
               >
                 <div className="col-1 d-flex justify-content-end align-items-center">
                   {/* <BsPersonCircle size={50} /> */}
                   <img
-                    src={r?.lastMessage?.from?.image}
+                    src={'https://cdn-icons-png.freepik.com/512/5045/5045878.png'}
                     alt="user-profile-pic"
                     style={{ width: 50 }}
                   />
@@ -129,7 +116,7 @@ const LiveChat = (props) => {
                         textOverflow: 'ellipsis',
                       }}
                     >
-                      {r?.lastMessage?.text}
+                      {r?.lastMessage?.from?.name}: {r?.lastMessage?.text}
                     </p>
                   </div>
                 </div>
