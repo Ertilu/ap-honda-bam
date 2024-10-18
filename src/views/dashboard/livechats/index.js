@@ -22,11 +22,27 @@ import { useDispatch } from 'react-redux'
 import { BsPersonCircle } from 'react-icons/bs'
 import 'react-datepicker/dist/react-datepicker.css'
 import { RiCheckDoubleFill } from 'react-icons/ri'
-import { PARTYKIT_HOST, SINGLETON_ROOM_ID } from 'src/config'
+import { PARTYKIT_HOST, PARTYKIT_URL, SINGLETON_ROOM_ID } from 'src/config'
 import usePartySocket from 'partysocket/react'
 import { removeDuplicates } from '../../../shared/utils'
+import * as moment from 'moment'
 
-const Dashboard = (props) => {
+const identify = async (socket, user) => {
+  const splitUrl = socket.url.split('?_pk=')
+  const pk = splitUrl[splitUrl.length - 1]
+  // the ./auth route will authenticate the connection to the partykit room
+  const url = `${PARTYKIT_URL}/parties/chatroom/${user?.id}/auth?_pk=${pk}`
+  const req = await fetch(url, { method: 'POST', body: JSON.stringify(user) })
+
+  if (!req.ok) {
+    const res = await req.text()
+    console.error('Failed to authenticate connection to PartyKit room', res)
+  }
+
+  return req
+}
+
+const LiveChat = (props) => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const [rooms, setRooms] = useState([])
@@ -82,11 +98,16 @@ const Dashboard = (props) => {
               <div
                 className="w-100 border-bottom row mx-auto py-3 userchat"
                 style={{ height: '80px' }}
-                onClick={() => navigate('/dashboard/livechats/roomchat')}
+                onClick={() => navigate(`/dashboard/livechats/roomchat/${r?.id}`)}
                 key={idx}
               >
                 <div className="col-1 d-flex justify-content-end align-items-center">
-                  <BsPersonCircle size={50} />
+                  {/* <BsPersonCircle size={50} /> */}
+                  <img
+                    src={r?.lastMessage?.from?.image}
+                    alt="user-profile-pic"
+                    style={{ width: 50 }}
+                  />
                 </div>
                 <div className="col w-50 h-100" style={{ cursor: 'pointer' }}>
                   <div className="h-50  row">
@@ -95,7 +116,7 @@ const Dashboard = (props) => {
                     </div>
                     <div className="col">
                       <p className="text-end" style={{ fontSize: '15px' }}>
-                        04.20 PM
+                        {moment(new Date(r?.lastMessage?.at)).format('DD/MM/YYYY, HH:mm')}
                       </p>
                     </div>
                   </div>
@@ -108,9 +129,7 @@ const Dashboard = (props) => {
                         textOverflow: 'ellipsis',
                       }}
                     >
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas aliquam erat
-                      tempor elementum venenatis. Duis non lacus vestibulum, aliquet nisi eget,
-                      dictum tellus. Sed in.
+                      {r?.lastMessage?.text}
                     </p>
                   </div>
                 </div>
@@ -138,4 +157,4 @@ const Dashboard = (props) => {
   )
 }
 
-export default Dashboard
+export default LiveChat

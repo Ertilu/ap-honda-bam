@@ -1,25 +1,15 @@
-import React, { useMemo, useRef } from 'react'
-import {
-  CForm,
-  CCardBody,
-  CContainer,
-  CFormInput,
-  CCardHeader,
-  CFormLabel,
-  CCard,
-  CInputGroup,
-  CButton,
-  CImage,
-} from '@coreui/react'
-import { spacing } from 'src/shared/style.const'
+import React from 'react'
+import { CCardBody, CContainer, CCardHeader, CCard } from '@coreui/react'
 import './index.scss'
 import Loading from 'src/components/Loading'
 import { useUtil } from './index.util'
-import { CDatePicker } from '@coreui/react-pro'
 import { BsPersonCircle } from 'react-icons/bs'
 import { IoMdSend } from 'react-icons/io'
+import { useParams } from 'react-router-dom'
 
 const PageForms = () => {
+  const { id: roomId } = useParams()
+  console.log('roomId', roomId)
   const {
     state: { isButtonDisabled, data, loading, loadingUpload, removeItems },
     event: { _submit, onCancel, onChangeText, onUploadImages },
