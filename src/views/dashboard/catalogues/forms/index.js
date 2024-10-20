@@ -21,7 +21,7 @@ import { useUtil } from './index.util'
 
 const PageForms = () => {
   const {
-    state: { isButtonDisabled, data, loading, loadingUpload, loadingColorImage },
+    state: { isButtonDisabled, data, loading, loadingUpload, loadingColorImage, colorTypes },
     event: {
       _submit,
       onCancel,
@@ -67,6 +67,33 @@ const PageForms = () => {
     addFeatures()
     setIsTambahFitur(false)
   }
+
+  console.log('data', data)
+
+  const renderUploadBanner = useMemo(() => {
+    return (
+      <>
+        <div>
+          <div
+            onClick={() => bannerUploadRef.current.click()}
+            className="m-2 bg-body-secondary rounded d-flex align-items-center justify-content-center"
+            style={{ width: '15em', height: '7em', cursor: 'pointer' }}
+            disabled={loadingUpload.banners}
+          >
+            {loadingUpload.banners ? 'Uploading...' : 'Upload Banner'}
+          </div>
+        </div>
+        <input
+          type="file"
+          id="bannersFile"
+          accept="image/*"
+          onChange={(e) => onUploadImages(e, 'banners')}
+          ref={bannerUploadRef}
+          style={{ display: 'none' }}
+        ></input>
+      </>
+    )
+  }, [bannerUploadRef, loadingUpload, bannerUploadRef])
 
   return (
     <div
@@ -264,6 +291,7 @@ const PageForms = () => {
                     { label: 'Matic', value: 'matic' },
                     { label: 'Sport', value: 'sport' },
                     { label: 'Cub', value: 'cub' },
+                    { label: 'EV', value: 'ev' },
                   ]}
                   onChange={(e) =>
                     e.target.value === 'Select Category'
@@ -325,40 +353,37 @@ const PageForms = () => {
                 <CInputGroup>
                   {data.banners && data.banners.length ? (
                     <div className="col-lg-4 col-sm-12 position-relative">
-                      <CImage alt={`banners`} fluid thumbnail src={data?.banners} height={'auto'} />
-                      <div
-                        style={{
-                          position: 'absolute',
-                          top: 10,
-                          right: 10,
-                        }}
-                      >
-                        <span className="remove-image" onClick={() => removeItem('banners')}>
-                          &times;
-                        </span>
-                      </div>
+                      {data?.banners?.map((b, idx) => {
+                        return (
+                          <div key={b} className="d-flex">
+                            <CImage alt={`banners`} fluid thumbnail src={b} height={'auto'} />
+                            <div
+                              style={{
+                                position: 'relative',
+                              }}
+                            >
+                              <div
+                                style={{
+                                  position: 'absolute',
+                                  top: 10,
+                                  right: 10,
+                                }}
+                              >
+                                <span
+                                  className="remove-image"
+                                  onClick={() => removeItems(idx, 'banners')}
+                                >
+                                  &times;
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      })}
+                      {data.banners.length > 0 && renderUploadBanner}
                     </div>
                   ) : (
-                    <>
-                      <div>
-                        <div
-                          onClick={() => bannerUploadRef.current.click()}
-                          className="m-2 bg-body-secondary rounded d-flex align-items-center justify-content-center"
-                          style={{ width: '15em', height: '7em', cursor: 'pointer' }}
-                          disabled={loadingUpload.banners}
-                        >
-                          {loadingUpload.banners ? 'Uploading...' : 'Upload Banner'}
-                        </div>
-                      </div>
-                      <input
-                        type="file"
-                        id="bannersFile"
-                        accept="image/*"
-                        onChange={(e) => onUploadImages(e, 'banners')}
-                        ref={bannerUploadRef}
-                        style={{ display: 'none' }}
-                      ></input>
-                    </>
+                    renderUploadBanner
                   )}
                 </CInputGroup>
               </div>
@@ -390,6 +415,15 @@ const PageForms = () => {
                           onChange={(e) => onChangeNestedText(e, 'name', idx, 'colors')}
                           value={item.name}
                         />
+
+                        <CInputGroup>
+                          <CFormSelect
+                            aria-label="Select Type"
+                            placeholder="Select Type"
+                            options={colorTypes}
+                            onChange={(e) => onChangeNestedText(e, 'type', idx, 'colors')}
+                          />
+                        </CInputGroup>
                         <div
                           className="row row-cols-2 row-cols-md-3 gap-2"
                           style={{ height: '180px' }}

@@ -78,7 +78,7 @@ const LiveChat = (props) => {
           </div>
         </CCardHeader>
         <CCardBody>
-          {rooms?.map((r, idx) => {
+          {rooms?.reverse()?.map((r, idx) => {
             return (
               <div
                 className="w-100 border-bottom row mx-auto py-3 userchat"

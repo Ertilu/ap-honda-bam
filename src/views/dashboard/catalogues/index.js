@@ -32,6 +32,7 @@ import CatalogueService from 'src/services/catalogue.service'
 import './index.scss'
 import 'react-datepicker/dist/react-datepicker.css'
 import { spacing } from 'src/shared/style.const'
+import { EDIT_CATALOGUE } from 'src/actionType'
 
 const Dashboard = (props) => {
   const dispatch = useDispatch()
@@ -71,22 +72,11 @@ const Dashboard = (props) => {
 
   const onEdit = useCallback(
     async (id) => {
-      setLoading(true)
-      const res = await CatalogueService.getDetail(id)
-      if (res?.id) {
-        setLoading(false)
-        dispatch({
-          type: 'edit_inventory',
-          inventoryData: {
-            id: res?.id,
-            name: res?.name,
-            price: res?.price,
-          },
-        })
-        navigate('/dashboard/forms')
-      }
+      navigate('/dashboard/catalogues/forms', {
+        state: { id },
+      })
     },
-    [dispatch, setLoading, navigate],
+    [navigate],
   )
 
   const onDelete = useCallback(async () => {

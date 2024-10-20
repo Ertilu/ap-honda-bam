@@ -11,7 +11,8 @@ const changeState = (state = initialState, { type, ...rest }) => {
       return {
         ...state,
         formMode: 'edit',
-        catalogueData: rest?.catalogueData || initialState.catalogueData,
+        catalogueData:
+          { ...state.catalogueData, ...rest?.catalogueData } || initialState.catalogueData,
       }
     case RESET_CATALOGUE_FORM:
       return {

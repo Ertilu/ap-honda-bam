@@ -1,6 +1,6 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
+import { useNavigation, useNavigate, useLocation } from 'react-router-dom'
 import CatalogueService from 'src/services/catalogue.service'
 import { RESET_CATALOGUE_FORM } from 'src/actionType'
 import { ImageService } from 'src/services'
@@ -8,9 +8,53 @@ import { ImageService } from 'src/services'
 export const useUtil = () => {
   const navigate = useNavigate()
   const catalogueData = useSelector((state) => state.catalogueData)
-  const formMode = useSelector((state) => state.formMode)
+  const [formMode, setFormMode] = useState('add')
+  const location = useLocation()
+
   const dispatch = useDispatch()
-  const [data, setData] = useState(catalogueData)
+  const [data, setData] = useState({
+    banners: [
+      'https://res.cloudinary.com/dthdnryp3/image/upload/v1729419096/catalogues/29e71d40d4ff8b437d8a61df88878b9c%20%281%29.png1046847bit.png',
+      'https://res.cloudinary.com/dthdnryp3/image/upload/v1729424436/catalogues/dbe258d355741fb0b6f57e52cefd1576.png453187bit.png',
+    ],
+    images: [
+      'https://res.cloudinary.com/dthdnryp3/image/upload/v1726496253/catalogues/PCX-160-ABS-Putih-transformed.png5081537bit.png',
+    ],
+    name: 'produk new',
+    price: '15000000',
+    description: 'deskripsi',
+    category: 'ev',
+    colors: [
+      {
+        name: 'Merah',
+        code: '#fff',
+        code2: '#fff',
+        code3: '#fff',
+        image:
+          'https://res.cloudinary.com/dthdnryp3/image/upload/v1726496253/catalogues/PCX-160-ABS-Putih-transformed.png5081537bit.png',
+      },
+    ],
+    logo: 'https://res.cloudinary.com/dthdnryp3/image/upload/v1727613549/catalogues/Beat%20Deluxe%20CBS%20ISS%20Hitam.png1921207bit.png',
+    types: [
+      {
+        name: 'Tipe A',
+        price: '16000000',
+      },
+      {
+        name: 'Deluxe',
+        price: '180000',
+      },
+    ],
+    features: [
+      {
+        title: 'bisa nyala',
+        text: 'mesinnya bisa nyala',
+        image:
+          'https://res.cloudinary.com/dthdnryp3/image/upload/v1727603645/catalogues/Beat%20Deluxe%20Smart%20Key%20Biru.png2104437bit.png',
+      },
+    ],
+    downPayment: '500',
+  })
   const [loading, setLoading] = useState(false)
   const [loadingUpload, setLoadingUpload] = useState({
     banners: false,
@@ -41,8 +85,30 @@ export const useUtil = () => {
         downPayment: parseInt(data.downPayment, 10),
       }
       delete payloadEdit?.id
-      delete payloadEdit?.remaining
-      result = await CatalogueService.update(data?.id, payloadEdit)
+      delete payloadEdit.createdAt
+      delete payloadEdit.updatedAt
+      const newPayloadEdit = {
+        ...payloadEdit,
+        colors: payloadEdit?.colors?.map((c) => {
+          return {
+            ...c,
+            _id: undefined,
+          }
+        }),
+        features: payloadEdit?.features?.map((f) => {
+          return {
+            ...f,
+            _id: undefined,
+          }
+        }),
+        types: payloadEdit?.types?.map((f) => {
+          return {
+            ...f,
+            _id: undefined,
+          }
+        }),
+      }
+      result = await CatalogueService.update(data?.id, newPayloadEdit)
     }
     if (result?.id) {
       navigate(-1)
@@ -81,6 +147,15 @@ export const useUtil = () => {
       loading,
     [data, loading],
   )
+
+  const colorTypes = useMemo(() => {
+    return data?.types
+      ?.filter((t) => t?.name !== '')
+      ?.map((t) => ({
+        label: t?.name,
+        value: t?.name,
+      }))
+  }, [data])
 
   const handleKeyDown = useCallback((e) => {
     // If user did not press enter key, return
@@ -317,6 +392,21 @@ export const useUtil = () => {
     e.target.value = ''
   }, [])
 
+  useEffect(() => {
+    if (location.state?.id) {
+      setFormMode('edit')
+      setLoading(true)
+      CatalogueService.getDetail(location.state.id)
+        ?.then((res) => {
+          setData((prev) => {
+            return { ...prev, ...res }
+          })
+        })
+        .catch((err) => alert(err?.message))
+        .finally(() => setLoading(false))
+    }
+  }, [location.state])
+
   return {
     state: {
       isButtonDisabled,
@@ -324,6 +414,7 @@ export const useUtil = () => {
       data,
       loadingUpload,
       loadingColorImage,
+      colorTypes,
     },
     event: {
       _submit,
