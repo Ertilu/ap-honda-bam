@@ -68,8 +68,6 @@ const PageForms = () => {
     setIsTambahFitur(false)
   }
 
-  console.log('data', data)
-
   const renderUploadBanner = useMemo(() => {
     return (
       <>
@@ -276,6 +274,7 @@ const PageForms = () => {
                   placeholder="Masukan Deskripsi"
                   rows={3}
                   onChange={(e) => onChangeText(e, 'description')}
+                  value={data.description}
                 ></CFormTextarea>
               </CInputGroup>
 
@@ -298,6 +297,7 @@ const PageForms = () => {
                       ? onChangeText({ target: { value: '' } }, 'category')
                       : onChangeText(e, 'category')
                   }
+                  value={data.category}
                 />
               </CInputGroup>
 
