@@ -123,13 +123,30 @@ const Dashboard = (props) => {
                 </CInputGroupText>
               </CInputGroup>
             </div>
-            <CButton
-              color="primary"
-              style={{ margin: `${spacing[8]} 0` }}
-              onClick={() => navigate('/dashboard/catalogues/forms')}
-            >
-              Add Data
-            </CButton>
+            <div className="d-flex justify-content-between align-items-center mt-2">
+              <CButton
+                color="primary"
+                style={{ margin: `${spacing[8]} 0` }}
+                onClick={() => navigate('/dashboard/catalogues/forms')}
+              >
+                Add Data
+              </CButton>
+              <div className="d-flex gap-3 d-flex justify-content-center align-items-center">
+                <h6>Total Data: </h6>
+                <div
+                  className="border border-light-subtle d-flex p-1 justify-content-center align-items-center rounded"
+                  style={{
+                    backgroundColor: '#EBEDEF',
+                    height: '40px',
+                    width: 'auto',
+                    minWidth: '40px',
+                    maxWidth: '60px',
+                  }}
+                >
+                  <h6>{data?.length}</h6>
+                </div>
+              </div>
+            </div>
           </div>
         </CCardHeader>
         <CCardBody>
@@ -154,7 +171,7 @@ const Dashboard = (props) => {
                 <CTableHeaderCell scope="col" style={{ minWidth: '100px', maxWidth: '100px' }}>
                   Category
                 </CTableHeaderCell>
-                <CTableHeaderCell scope="col" style={{ minWidth: '150px', maxWidth: '150px' }}>
+                <CTableHeaderCell scope="col" style={{ minWidth: '350px', maxWidth: '350px' }}>
                   Colors
                 </CTableHeaderCell>
                 <CTableHeaderCell scope="col" style={{ minWidth: '150px', maxWidth: '150px' }}>
@@ -166,7 +183,7 @@ const Dashboard = (props) => {
                 <CTableHeaderCell scope="col" style={{ minWidth: '150px', maxWidth: '150px' }}>
                   Images
                 </CTableHeaderCell>
-                <CTableHeaderCell scope="col" style={{ minWidth: '150px', maxWidth: '150px' }}>
+                <CTableHeaderCell scope="col" style={{ minWidth: '250px', maxWidth: '250px' }}>
                   Feature Texts
                 </CTableHeaderCell>
                 <CTableHeaderCell scope="col" style={{ minWidth: '150px', maxWidth: '150px' }}>
@@ -326,9 +343,10 @@ const Dashboard = (props) => {
                     </CTableDataCell>
                     <CTableDataCell align="top">
                       <div
+                        className="gap-2"
                         style={{
                           display: 'grid',
-                          gridTemplateColumns: 'auto',
+                          gridTemplateColumns: 'auto auto',
                           width: '100%',
                           height: 'auto',
                         }}
