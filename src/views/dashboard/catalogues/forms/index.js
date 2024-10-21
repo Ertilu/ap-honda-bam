@@ -196,7 +196,7 @@ const PageForms = () => {
               {data?.types?.map((item, idx) => {
                 return (
                   <CInputGroup key={idx}>
-                    {!isTambahTipe && idx === data?.types.length - 1 ? (
+                    {!isTambahTipe && item?.name === '' && item?.price === '' ? (
                       <CButton
                         color="primary"
                         onClick={() => setIsTambahTipe(true)}
@@ -422,6 +422,7 @@ const PageForms = () => {
                             placeholder="Select Type"
                             options={colorTypes}
                             onChange={(e) => onChangeNestedText(e, 'type', idx, 'colors')}
+                            value={item?.type}
                           />
                         </CInputGroup>
                         <div

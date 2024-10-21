@@ -399,6 +399,13 @@ export const useUtil = () => {
       CatalogueService.getDetail(location.state.id)
         ?.then((res) => {
           setData((prev) => {
+            let colors = [...res.colors]?.map((c) => {
+              return {
+                ...c,
+                type: c?.type || res?.types?.[0]?.name,
+              }
+            })
+            res.colors = colors
             return { ...prev, ...res }
           })
         })
