@@ -12,49 +12,7 @@ export const useUtil = () => {
   const location = useLocation()
 
   const dispatch = useDispatch()
-  const [data, setData] = useState({
-    banners: [
-      'https://res.cloudinary.com/dthdnryp3/image/upload/v1729419096/catalogues/29e71d40d4ff8b437d8a61df88878b9c%20%281%29.png1046847bit.png',
-      'https://res.cloudinary.com/dthdnryp3/image/upload/v1729424436/catalogues/dbe258d355741fb0b6f57e52cefd1576.png453187bit.png',
-    ],
-    images: [
-      'https://res.cloudinary.com/dthdnryp3/image/upload/v1726496253/catalogues/PCX-160-ABS-Putih-transformed.png5081537bit.png',
-    ],
-    name: 'produk new',
-    price: '15000000',
-    description: 'deskripsi',
-    category: 'ev',
-    colors: [
-      {
-        name: 'Merah',
-        code: '#fff',
-        code2: '#fff',
-        code3: '#fff',
-        image:
-          'https://res.cloudinary.com/dthdnryp3/image/upload/v1726496253/catalogues/PCX-160-ABS-Putih-transformed.png5081537bit.png',
-      },
-    ],
-    logo: 'https://res.cloudinary.com/dthdnryp3/image/upload/v1727613549/catalogues/Beat%20Deluxe%20CBS%20ISS%20Hitam.png1921207bit.png',
-    types: [
-      {
-        name: 'Tipe A',
-        price: '16000000',
-      },
-      {
-        name: 'Deluxe',
-        price: '180000',
-      },
-    ],
-    features: [
-      {
-        title: 'bisa nyala',
-        text: 'mesinnya bisa nyala',
-        image:
-          'https://res.cloudinary.com/dthdnryp3/image/upload/v1727603645/catalogues/Beat%20Deluxe%20Smart%20Key%20Biru.png2104437bit.png',
-      },
-    ],
-    downPayment: '500',
-  })
+  const [data, setData] = useState(catalogueData)
   const [loading, setLoading] = useState(false)
   const [loadingUpload, setLoadingUpload] = useState({
     banners: false,
