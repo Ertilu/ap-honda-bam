@@ -130,7 +130,7 @@ const PageForms = () => {
                           right: 10,
                         }}
                       >
-                        <span className="remove-image" onClick={() => removeItem('images')}>
+                        <span className="remove-image" onClick={() => removeItems(0, 'images')}>
                           &times;
                         </span>
                       </div>
