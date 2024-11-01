@@ -323,6 +323,11 @@ const _navApp = [
       },
       {
         component: CNavItem,
+        name: 'Brochures',
+        to: '/dashboard/brochures',
+      },
+      {
+        component: CNavItem,
         name: 'Live Chats',
         to: '/dashboard/livechats',
       },
