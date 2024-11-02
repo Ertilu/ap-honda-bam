@@ -53,7 +53,7 @@ const Brochures = (props) => {
     },
     [getData],
   )
-
+  console.log('data', data)
   return (
     <>
       <CCard>
@@ -82,11 +82,7 @@ const Brochures = (props) => {
           ></input>
         </CCardHeader>
         <CCardBody>
-          <CImage
-            src={data ? `data:image/jpeg;base64,${arrayBufferToBase64(data?.data)}` : null}
-            width={'100%'}
-            alt="brochure"
-          />
+          <CImage src={data ? data : null} width={'100%'} alt="brochure" />
         </CCardBody>
       </CCard>
     </>

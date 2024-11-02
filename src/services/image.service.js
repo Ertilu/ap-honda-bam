@@ -29,6 +29,31 @@ class ImageService {
       .then((res) => res?.data)
       .catch((err) => alert(err?.response?.data?.message || err?.data?.message || err?.message))
   }
+
+  getBanners({ nextCursor }) {
+    return api
+      .get(`/v1/images/banners`, { params: { nextCursor } })
+      .then((res) => res?.data)
+      .catch((err) => alert(err?.response?.data?.message || err?.data?.message || err?.message))
+  }
+
+  addBanner(data) {
+    return api
+      .post(`/v1/images/banners`, data, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+      .then((res) => res?.data)
+      .catch((err) => alert(err?.response?.data?.message || err?.data?.message || err?.message))
+  }
+
+  deleteBanner(id) {
+    return api
+      .delete(`/v1/images/banners/${encodeURIComponent(id)}`)
+      .then((res) => res?.data)
+      .catch((err) => alert(err?.response?.data?.message || err?.data?.message || err?.message))
+  }
 }
 
 const Service = new ImageService()

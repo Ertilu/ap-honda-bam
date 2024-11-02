@@ -9,7 +9,6 @@ function Loading({ visible }) {
     <div>
       <CModal
         visible={visible || false}
-        fullscreen
         style={{
           backgroundColor: 'transparent',
           boxShadow: 'none',
@@ -18,13 +17,15 @@ function Loading({ visible }) {
         }}
         alignment="center"
       >
-        <ReactLoading
-          type={'spokes'}
-          color={'#0d6efd'}
-          height={'10%'}
-          width={'10%'}
-          className="loading-component"
-        />
+        <div style={{ width: '20vw', height: '20vw', backgroundColor: '#0d6efd' }}>
+          <ReactLoading
+            type={'bars'}
+            color={'white'}
+            height={'100%'}
+            width={'100%'}
+            className="loading-component"
+          />
+        </div>
       </CModal>
     </div>
   )
