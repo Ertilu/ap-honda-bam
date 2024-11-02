@@ -35,7 +35,7 @@ const Banners = (props) => {
         setData((prev) => {
           if (prev?.resources && res?.resources) {
             let newData = { ...prev }
-            newData.resources = [...newData.resources, ...res?.resources]?.filter(
+            newData.resources = [...res?.resources, ...newData.resources]?.filter(
               (value, index, self) =>
                 index === self.findIndex((t) => t.asset_id === value.asset_id),
             )
