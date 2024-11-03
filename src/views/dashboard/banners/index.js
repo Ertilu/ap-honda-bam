@@ -86,7 +86,7 @@ const Banners = (props) => {
 
   const renderUploadBanner = useMemo(() => {
     return (
-      <div className="col-md-4 p-2" style={{}}>
+      <div className="col-md-4 p-2 " style={{ height: '10em' }}>
         <div style={{ width: '100%', height: '100%', cursor: 'pointer' }}>
           <div
             onClick={() => (loadingUpload ? null : bannerUploadRef.current.click())}
@@ -109,6 +109,11 @@ const Banners = (props) => {
           ref={bannerUploadRef}
           style={{ display: 'none' }}
         ></input>
+        <input
+          className="bg-body-secondary rounded px-2 mt-2"
+          style={{ width: '100%', outline: 'none', border: 'none' }}
+          placeholder="Masukkan Link Halaman Banner"
+        />
       </div>
     )
   }, [bannerUploadRef, loadingUpload])
@@ -123,41 +128,50 @@ const Banners = (props) => {
             </div>
           </div>
         </CCardHeader>
-        <CCardBody>
+        <CCardBody style={{ paddingBottom: '3em' }}>
           <Loading visible={loading} />
           {data?.resources && data.resources?.length ? (
-            <div className="conteiner">
+            <div className="conteiner ">
               <div className="row">
                 {data?.resources?.map((b, idx) => {
                   return (
-                    <div key={b} className="d-flex col-md-4 p-2" style={{}}>
-                      <CImage
-                        alt={`banners`}
-                        fluid
-                        thumbnail
-                        src={b?.secure_url}
-                        width={'100%'}
-                        style={{ objectFit: 'contain' }}
-                      />
-                      <div
-                        style={{
-                          position: 'relative',
-                        }}
-                      >
+                    <div key={b} className="col-md-4 p-2 ">
+                      <div className="d-flex">
+                        <CImage
+                          alt={`banners`}
+                          fluid
+                          thumbnail
+                          src={b?.secure_url}
+                          width={'100%'}
+                          style={{ objectFit: 'contain' }}
+                        />
                         <div
                           style={{
-                            position: 'absolute',
-                            top: 10,
-                            right: 10,
+                            position: 'relative',
                           }}
                         >
-                          <span
-                            className="remove-image"
-                            onClick={() => onDeleteBanner({ id: b?.public_id })}
+                          <div
+                            style={{
+                              position: 'absolute',
+                              top: 10,
+                              right: 10,
+                            }}
                           >
-                            &times;
-                          </span>
+                            <span
+                              className="remove-image"
+                              onClick={() => onDeleteBanner({ id: b?.public_id })}
+                            >
+                              &times;
+                            </span>
+                          </div>
                         </div>
+                      </div>
+                      <div
+                        className="border border-body-secondary d-flex align-content-center rounded mt-2 px-2 gap-2"
+                        style={{ height: '2em' }}
+                      >
+                        <p>Link:</p>
+                        <p>Https://gitu</p>
                       </div>
                     </div>
                   )
