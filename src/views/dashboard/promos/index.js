@@ -29,6 +29,7 @@ import './index.scss'
 import 'react-datepicker/dist/react-datepicker.css'
 import { spacing } from 'src/shared/style.const'
 import * as moment from 'moment'
+import { EDIT_PROMO } from 'src/actionType'
 
 const Dashboard = (props) => {
   const dispatch = useDispatch()
@@ -66,22 +67,11 @@ const Dashboard = (props) => {
 
   const onEdit = useCallback(
     async (id) => {
-      setLoading(true)
-      const res = await PromoService.getDetail(id)
-      if (res?.id) {
-        setLoading(false)
-        dispatch({
-          type: 'edit_inventory',
-          inventoryData: {
-            id: res?.id,
-            name: res?.name,
-            price: res?.price,
-          },
-        })
-        navigate('/dashboard/forms')
-      }
+      navigate('/dashboard/promos/forms', {
+        state: { id },
+      })
     },
-    [dispatch, setLoading, navigate],
+    [navigate],
   )
 
   const onDelete = useCallback(async () => {
@@ -144,12 +134,18 @@ const Dashboard = (props) => {
                 </CTableHeaderCell>
                 <CTableHeaderCell scope="col" width={500}>
                   Images
+                </CTableHeaderCell>{' '}
+                <CTableHeaderCell scope="col" width={500}>
+                  Content
                 </CTableHeaderCell>
                 <CTableHeaderCell scope="col" width={150}>
                   Start Date
                 </CTableHeaderCell>
                 <CTableHeaderCell scope="col" width={550}>
                   End Date
+                </CTableHeaderCell>
+                <CTableHeaderCell scope="col" style={{ minWidth: '150px', maxWidth: '150px' }}>
+                  Action
                 </CTableHeaderCell>
               </CTableRow>
             </CTableHead>
@@ -188,6 +184,19 @@ const Dashboard = (props) => {
                     </CTableDataCell>
 
                     <CTableDataCell
+                      scope="row"
+                      align="middle"
+                      onClick={() => openModalDetail(d)}
+                      style={{ cursor: 'pointer' }}
+                    >
+                      <div
+                        dangerouslySetInnerHTML={{
+                          __html: d?.content ? decodeURIComponent(d?.content) : '-',
+                        }}
+                      ></div>
+                    </CTableDataCell>
+
+                    <CTableDataCell
                       align="middle"
                       onClick={() => openModalDetail(d)}
                       style={{ cursor: 'pointer' }}
@@ -200,6 +209,26 @@ const Dashboard = (props) => {
                       style={{ cursor: 'pointer' }}
                     >
                       {moment(d.endDate).format('DD-MM-YYYY HH:mm:ss')}
+                    </CTableDataCell>
+                    <CTableDataCell align="top">
+                      <button
+                        className="button-action rounded-1 bg-warning text-white"
+                        style={{ width: '60px', height: '30px' }}
+                        onClick={() => onEdit(d?.id)}
+                      >
+                        Edit
+                      </button>
+
+                      <button
+                        className="button-action rounded-1 mx-1 bg-danger text-white"
+                        style={{ width: '60px', height: '30px' }}
+                        onClick={() => {
+                          setIdToDelete(d?.id)
+                          setModalConfirmDelete(true)
+                        }}
+                      >
+                        Hapus
+                      </button>
                     </CTableDataCell>
                   </CTableRow>
                 )

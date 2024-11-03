@@ -1,17 +1,19 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import PromoService from 'src/services/promo.service'
 import { RESET_PROMO_FORM } from 'src/actionType'
 import { ImageService } from 'src/services'
 import * as moment from 'moment'
+import { toLocalISOString } from 'src/shared/utils'
 
 export const useUtil = () => {
   const navigate = useNavigate()
   const promoData = useSelector((state) => {
     return Object.assign({}, state.promoData)
   })
-  const formMode = useSelector((state) => state.formMode)
+  const [formMode, setFormMode] = useState('add')
+  const location = useLocation()
   const dispatch = useDispatch()
   const [data, setData] = useState(promoData)
   const [loading, setLoading] = useState(false)
@@ -31,11 +33,18 @@ export const useUtil = () => {
         ...data,
         startDate: moment(data?.startDate).toDate(),
         endDate: moment(data?.endDate).toDate(),
+        content: encodeURIComponent(data?.content),
       })
     } else if (formMode === 'edit') {
       const payloadEdit = {
         ...data,
+        startDate: moment(data?.startDate).toDate(),
+        endDate: moment(data?.endDate).toDate(),
+        content: encodeURIComponent(data?.content),
       }
+      delete payloadEdit.id
+      delete payloadEdit.createdAt
+      delete payloadEdit.updatedAt
       result = await PromoService.update(data?.id, payloadEdit)
     }
     if (result?.id) {
@@ -63,6 +72,7 @@ export const useUtil = () => {
       !data.images?.length ||
       data?.startDate === '' ||
       data?.endDate === '' ||
+      data?.content === '' ||
       loading,
     [data, loading],
   )
@@ -112,6 +122,28 @@ export const useUtil = () => {
       return newData
     })
   }, [])
+
+  useEffect(() => {
+    if (location.state?.id) {
+      setFormMode('edit')
+      setLoading(true)
+      PromoService.getDetail(location.state.id)
+        ?.then((res) => {
+          setData((prev) => {
+            return {
+              ...prev,
+              ...res,
+              startDate: toLocalISOString(new Date(res?.startDate)),
+              endDate: toLocalISOString(new Date(res?.endDate)),
+              content: decodeURIComponent(res?.content),
+            }
+          })
+        })
+        .catch((err) => alert(err?.message))
+        .finally(() => setLoading(false))
+    }
+  }, [location.state])
+  console.log('data', data)
 
   return {
     state: {

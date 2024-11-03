@@ -1,5 +1,11 @@
 import { createStore } from 'redux'
-import { EDIT_CATALOGUE, RESET_CATALOGUE_FORM, RESET_PROMO_FORM, SET } from './actionType'
+import {
+  EDIT_CATALOGUE,
+  EDIT_PROMO,
+  RESET_CATALOGUE_FORM,
+  RESET_PROMO_FORM,
+  SET,
+} from './actionType'
 import { initialState } from './initialData'
 import { toLocalISOString } from './shared/utils'
 
@@ -13,6 +19,12 @@ const changeState = (state = initialState, { type, ...rest }) => {
         formMode: 'edit',
         catalogueData:
           { ...state.catalogueData, ...rest?.catalogueData } || initialState.catalogueData,
+      }
+    case EDIT_PROMO:
+      return {
+        ...state,
+        formMode: 'edit',
+        promo: { ...state.promoData, ...rest?.promoData } || initialState.promoData,
       }
     case RESET_CATALOGUE_FORM:
       return {
@@ -57,6 +69,7 @@ const changeState = (state = initialState, { type, ...rest }) => {
         promoData: {
           name: '',
           images: [],
+          content: '',
           startDate: toLocalISOString(new Date()),
           endDate: toLocalISOString(new Date()),
         },

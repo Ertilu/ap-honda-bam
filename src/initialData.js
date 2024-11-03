@@ -3,6 +3,7 @@ import { toLocalISOString } from './shared/utils'
 export const promoData = {
   name: '',
   images: [],
+  content: '',
   startDate: toLocalISOString(new Date()),
   endDate: toLocalISOString(new Date()),
 }

@@ -16,6 +16,38 @@ import './index.scss'
 import Loading from 'src/components/Loading'
 import { useUtil } from './index.util'
 import { CDatePicker } from '@coreui/react-pro'
+import ReactQuill from 'react-quill'
+import 'react-quill/dist/quill.snow.css'
+
+const EditorModules = {
+  toolbar: [
+    [{ header: '1' }, { header: '2' }, { font: [] }],
+    [{ size: [] }],
+    ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+    [{ list: 'ordered' }, { list: 'bullet' }, { indent: '-1' }, { indent: '+1' }],
+    ['link'],
+    ['clean'],
+  ],
+  clipboard: {
+    // toggle to add extra line breaks when pasting HTML:
+    matchVisual: false,
+  },
+}
+
+const EditorFormats = [
+  'header',
+  'font',
+  'size',
+  'bold',
+  'italic',
+  'underline',
+  'strike',
+  'blockquote',
+  'list',
+  'bullet',
+  'indent',
+  'link',
+]
 
 const PageForms = () => {
   const {
@@ -94,6 +126,19 @@ const PageForms = () => {
                   ></input>
                 </CInputGroup>
               </div>
+
+              <CFormLabel htmlFor="input-harga-label" style={{ marginTop: spacing[16] }}>
+                Content
+              </CFormLabel>
+              <ReactQuill
+                theme={'snow'}
+                onChange={(html) => onChangeText({ target: { value: html } }, 'content')}
+                value={data?.content}
+                modules={EditorModules}
+                formats={EditorFormats}
+                bounds={'.app'}
+                placeholder={'Masukkan Konten Promo'}
+              />
 
               <CFormLabel htmlFor="input-harga-start-date" style={{ marginTop: spacing[16] }}>
                 Start Date
